@@ -1,0 +1,36 @@
+{'obj': 'miniled_TypeB_2', 'data_type': 'mvtec', 'data_path': 'C:\\Users\\Administrator\\Desktop\\dataset\\LED\\miniled_AD', 'epochs': 50, 'batch_size': 32, 'img_size': 224, 'lr': 0.0001, 'momentum': 0.9, 'seed': 10, 'shot': 4, 'inferences': 10, 'stn_mode': 'rotation_scale', 'input_channel': 3, 'prefix': '2026-04-07-3763', 'save_dir': './logs_mvtec/', 'save_model_dir': './logs_mvtec/rotation_scale/4/miniled_TypeB_2/'}
+---------rotation_scale--------
+   1/ 50 ----- [[2026-04-07 05:47:05]] [Need: 00:00:00]
+Test Epoch(img, pixel): 0 (0.554035, 0.503749) best: (0.554, 0.504)
+Train Epoch: 1 Total_Loss: -0.014751
+   2/ 50 ----- [[2026-04-07 06:06:13]] [Need: 15:12:16]
+Test Epoch(img, pixel): 1 (0.500887, 0.513195) best: (0.554, 0.504)
+Train Epoch: 2 Total_Loss: -0.016008
+   3/ 50 ----- [[2026-04-07 06:25:22]] [Need: 14:56:31]
+Test Epoch(img, pixel): 2 (0.430089, 0.536434) best: (0.554, 0.504)
+Train Epoch: 3 Total_Loss: -0.016902
+   4/ 50 ----- [[2026-04-07 06:44:29]] [Need: 14:38:03]
+Test Epoch(img, pixel): 3 (0.492040, 0.568038) best: (0.492, 0.568)
+Train Epoch: 4 Total_Loss: -0.017436
+   5/ 50 ----- [[2026-04-07 07:03:28]] [Need: 14:17:51]
+Test Epoch(img, pixel): 4 (0.500665, 0.593121) best: (0.501, 0.593)
+Train Epoch: 5 Total_Loss: -0.019206
+   6/ 50 ----- [[2026-04-07 07:22:33]] [Need: 13:58:54]
+Test Epoch(img, pixel): 5 (0.449379, 0.620713) best: (0.501, 0.593)
+Train Epoch: 6 Total_Loss: -0.020079
+   7/ 50 ----- [[2026-04-07 07:41:34]] [Need: 13:39:30]
+Test Epoch(img, pixel): 6 (0.559956, 0.630123) best: (0.560, 0.630)
+Train Epoch: 7 Total_Loss: -0.021367
+   8/ 50 ----- [[2026-04-07 08:00:39]] [Need: 13:20:36]
+Test Epoch(img, pixel): 7 (0.682661, 0.625282) best: (0.683, 0.625)
+Train Epoch: 8 Total_Loss: -0.022516
+   9/ 50 ----- [[2026-04-07 08:19:48]] [Need: 13:02:01]
+Test Epoch(img, pixel): 8 (0.762018, 0.618754) best: (0.762, 0.619)
+Train Epoch: 9 Total_Loss: -0.023592
+  10/ 50 ----- [[2026-04-07 08:38:54]] [Need: 12:42:44]
+Test Epoch(img, pixel): 9 (0.811574, 0.620047) best: (0.812, 0.620)
+Train Epoch: 10 Total_Loss: -0.024353
+  11/ 50 ----- [[2026-04-07 08:58:02]] [Need: 12:24:12]
+Test Epoch(img, pixel): 10 (0.861973, 0.624671) best: (0.862, 0.625)
+Train Epoch: 11 Total_Loss: -0.026081
+  12/ 50 ----- [[2026-04-07 09:16:57]] [Need: 12:04:31]

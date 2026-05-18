@@ -1,0 +1,21 @@
+{'obj': 'miniled_TypeB_1', 'data_type': 'mvtec', 'data_path': 'C:\\Users\\Administrator\\Desktop\\dataset\\LED\\miniled_AD', 'epochs': 50, 'batch_size': 32, 'img_size': 224, 'lr': 0.0001, 'momentum': 0.9, 'seed': 10, 'shot': 4, 'inferences': 10, 'stn_mode': 'rotation_scale', 'input_channel': 3, 'prefix': '2026-04-08-5317', 'save_dir': './logs_mvtec/', 'save_model_dir': './logs_mvtec/rotation_scale/4/miniled_TypeB_1/'}
+---------rotation_scale--------
+   1/ 50 ----- [[2026-04-08 11:43:43]] [Need: 00:00:00]
+Test Epoch(img, pixel): 0 (0.580149, 0.545291) best: (0.580, 0.545)
+Train Epoch: 1 Total_Loss: -0.014361
+   2/ 50 ----- [[2026-04-08 12:04:08]] [Need: 16:13:49]
+Test Epoch(img, pixel): 1 (0.562850, 0.546347) best: (0.580, 0.545)
+Train Epoch: 2 Total_Loss: -0.013537
+   3/ 50 ----- [[2026-04-08 12:26:53]] [Need: 16:51:08]
+Test Epoch(img, pixel): 2 (0.464115, 0.540633) best: (0.580, 0.545)
+Train Epoch: 3 Total_Loss: -0.014997
+   4/ 50 ----- [[2026-04-08 12:48:20]] [Need: 16:28:47]
+Test Epoch(img, pixel): 3 (0.418383, 0.541179) best: (0.580, 0.545)
+Train Epoch: 4 Total_Loss: -0.016188
+   5/ 50 ----- [[2026-04-08 13:07:17]] [Need: 15:38:48]
+Test Epoch(img, pixel): 4 (0.487444, 0.535350) best: (0.580, 0.545)
+Train Epoch: 5 Total_Loss: -0.017972
+   6/ 50 ----- [[2026-04-08 13:26:01]] [Need: 14:59:05]
+Test Epoch(img, pixel): 5 (0.513528, 0.532368) best: (0.580, 0.545)
+Train Epoch: 6 Total_Loss: -0.018684
+   7/ 50 ----- [[2026-04-08 13:47:23]] [Need: 14:45:17]

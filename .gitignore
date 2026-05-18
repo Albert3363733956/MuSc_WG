@@ -1,0 +1,48 @@
+# IDE / editor
+.idea/
+.vscode/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Environments / secrets
+.venv/
+venv/
+env/
+.env
+.env.*
+
+# Local data, weights, and experiment outputs
+/data/
+/datasets_raw/
+/MuSc-WG-main/data/
+/MuSc-WG-main/datasets_raw/
+weights/
+runs/
+outputs/
+outputs*/
+output/
+output*/
+*output*/
+results/
+checkpoints/
+wandb/
+logs/
+*.log
+
+# Model/data artifacts
+*.pt
+*.pth
+*.ckpt
+*.pkl
+*.npy
+*.npz
+*.onnx
+*.h5
+*.hdf5
+*.xlsx
+
+# OS files
+.DS_Store
+Thumbs.db
