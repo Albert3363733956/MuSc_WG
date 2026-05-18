@@ -311,7 +311,7 @@ class MuSc():
                 ablation_detail_start = 1       # 1: Skip Level 0 (Noise)
                 ablation_keep_ll = True         # True: Include Low Frequency Approximation
 
-                ablation_gamma   = 1.0          # Moderate Gamma
+                ablation_gamma   = 2.0          # Moderate Gamma
                 ablation_use_spot_weight = True  # Suppress patterns found in ANY other image (Occasional Normal Pattern)
                 ablation_use_morphology = False  # Toggle for Morphological Optimization (Opening/Closing + Smoothing)
                 
