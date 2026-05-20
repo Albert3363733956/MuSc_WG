@@ -1,4 +1,5 @@
 import argparse
+import importlib.util
 import os
 import sys
 import time
@@ -27,11 +28,13 @@ RsCIN = None
 open_clip = None
 _backbones = None
 mvtec = None
+mvtec_loco = None
 visa = None
 btad = None
 miniled = None
 microled = None
 _CLASSNAMES_mvtec_ad = None
+_CLASSNAMES_mvtec_loco = None
 _CLASSNAMES_visa = None
 _CLASSNAMES_btad = None
 _CLASSNAMES_miniled = None
@@ -46,17 +49,20 @@ def load_project_modules():
     global open_clip
     global _backbones
     global mvtec
+    global mvtec_loco
     global visa
     global btad
     global miniled
     global microled
     global _CLASSNAMES_mvtec_ad
+    global _CLASSNAMES_mvtec_loco
     global _CLASSNAMES_visa
     global _CLASSNAMES_btad
     global _CLASSNAMES_miniled
     global _CLASSNAMES_microled
 
     import datasets.mvtec as _mvtec
+    import datasets.mvtec_loco as _mvtec_loco
     import datasets.visa as _visa
     import datasets.btad as _btad
     import datasets.miniled as _miniled
@@ -67,6 +73,7 @@ def load_project_modules():
     from datasets.microled import _CLASSNAMES as __CLASSNAMES_microled
     from datasets.miniled import _CLASSNAMES as __CLASSNAMES_miniled
     from datasets.mvtec import _CLASSNAMES as __CLASSNAMES_mvtec_ad
+    from datasets.mvtec_loco import _CLASSNAMES as __CLASSNAMES_mvtec_loco
     from datasets.visa import _CLASSNAMES as __CLASSNAMES_visa
     from models.modules.WTConvStatic import WTConvLNAMDStatic as _WTConvLNAMDStatic
     from models.modules._MSM import MSM as _MSM
@@ -80,15 +87,39 @@ def load_project_modules():
     open_clip = _open_clip
     _backbones = __backbones
     mvtec = _mvtec
+    mvtec_loco = _mvtec_loco
     visa = _visa
     btad = _btad
     miniled = _miniled
     microled = _microled
     _CLASSNAMES_mvtec_ad = __CLASSNAMES_mvtec_ad
+    _CLASSNAMES_mvtec_loco = __CLASSNAMES_mvtec_loco
     _CLASSNAMES_visa = __CLASSNAMES_visa
     _CLASSNAMES_btad = __CLASSNAMES_btad
     _CLASSNAMES_miniled = __CLASSNAMES_miniled
     _CLASSNAMES_microled = __CLASSNAMES_microled
+
+
+def load_msm_function(msm_cfg):
+    if isinstance(msm_cfg, dict):
+        choice = msm_cfg.get("module", "original")
+    else:
+        choice = msm_cfg or "original"
+    choice_key = str(choice).lower().replace("_", "").replace("-", "")
+
+    if choice_key in ("original", "msm", "msm1", "msm10"):
+        return MSM, "original"
+    if choice_key in ("optimized", "msm2", "msm20", "msm2.0"):
+        module_path = REPO_ROOT / "models" / "modules" / "MSM2.0.py"
+        spec = importlib.util.spec_from_file_location(
+            "models.modules.MSM2_0_dynamic",
+            module_path,
+        )
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module.MSM, "optimized"
+
+    raise ValueError(f"Unsupported msm.module '{choice}'. Use 'original' or 'optimized'.")
 
 
 @dataclass
@@ -236,6 +267,8 @@ class MuScProfileRunner:
                     self.categories = _CLASSNAMES_visa
                 elif self.dataset == "mvtec_ad":
                     self.categories = _CLASSNAMES_mvtec_ad
+                elif self.dataset == "mvtec_loco":
+                    self.categories = _CLASSNAMES_mvtec_loco
                 elif self.dataset == "btad":
                     self.categories = _CLASSNAMES_btad
                 elif self.dataset == "miniled_ad":
@@ -252,6 +285,8 @@ class MuScProfileRunner:
         self.features_list = [l + 1 for l in cfg["models"]["feature_layers"]]
         self.divide_num = cfg["datasets"]["divide_num"]
         self.r_list = cfg["models"]["r_list"]
+        self.MSM, self.msm_module_name = load_msm_function(cfg.get("msm", {}))
+        print(f"MSM module: {self.msm_module_name}")
         self.output_dir = os.path.join(
             cfg["testing"]["output_dir"],
             self.dataset,
@@ -291,6 +326,11 @@ class MuScProfileRunner:
             return visa.VisaDataset(split=visa.DatasetSplit.TEST, **common_args)
         if self.dataset == "mvtec_ad":
             return mvtec.MVTecDataset(split=mvtec.DatasetSplit.TEST, **common_args)
+        if self.dataset == "mvtec_loco":
+            return mvtec_loco.MVTecLOCODataset(
+                split=mvtec_loco.DatasetSplit.TEST,
+                **common_args,
+            )
         if self.dataset == "btad":
             return btad.BTADDataset(split=btad.DatasetSplit.TEST, **common_args)
         if self.dataset == "miniled_ad":
@@ -529,7 +569,7 @@ def profile_category(model, category, profiler, max_images=None):
                         if not is_target_category:
                             current_use_spot_weight = False
 
-                    anomaly_maps_msm = MSM(
+                    anomaly_maps_msm = model.MSM(
                         Z=z,
                         device=model.device,
                         topmin_min=0,
@@ -775,6 +815,7 @@ def write_excel(output_excel, cfg, config_path, profiler, category_results, tota
         ("batch_size", cfg["models"]["batch_size"]),
         ("r_list", str(cfg["models"]["r_list"])),
         ("feature_layers", str(cfg["models"]["feature_layers"])),
+        ("msm_module", cfg.get("msm", {}).get("module", "original")),
         ("total_wall_ms", total_ms),
     ]
     for row in config_rows:

@@ -1,5 +1,6 @@
 import os
 import sys
+import importlib.util
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -7,6 +8,8 @@ sys.path.append('./models/backbone')
 
 import datasets.mvtec as mvtec
 from datasets.mvtec import _CLASSNAMES as _CLASSNAMES_mvtec_ad
+import datasets.mvtec_loco as mvtec_loco
+from datasets.mvtec_loco import _CLASSNAMES as _CLASSNAMES_mvtec_loco
 import datasets.visa as visa
 from datasets.visa import _CLASSNAMES as _CLASSNAMES_visa
 import datasets.btad as btad
@@ -21,7 +24,7 @@ import models.backbone._backbones as _backbones
 from models.modules._LNAMD import LNAMD
 # from models.modules.WTConvLNAMD import WTConvLNAMD
 from models.modules.WTConvStatic import WTConvLNAMDStatic
-from models.modules._MSM import MSM
+from models.modules._MSM import MSM as MSM_ORIGINAL
 from models.modules._RsCIN import RsCIN
 from models.modules._Optimization import AnomalyMapOptimizer
 from utils.metrics import compute_metrics
@@ -35,6 +38,25 @@ from sklearn.manifold import TSNE
 
 import warnings
 warnings.filterwarnings("ignore")
+
+
+def load_msm_function(msm_cfg):
+    if isinstance(msm_cfg, dict):
+        choice = msm_cfg.get('module', 'original')
+    else:
+        choice = msm_cfg or 'original'
+    choice_key = str(choice).lower().replace('_', '').replace('-', '')
+
+    if choice_key in ('original', 'msm', 'msm1', 'msm10'):
+        return MSM_ORIGINAL, 'original'
+    if choice_key in ('optimized', 'msm2', 'msm20', 'msm2.0'):
+        module_path = os.path.join(os.path.dirname(__file__), 'modules', 'MSM2.0.py')
+        spec = importlib.util.spec_from_file_location('models.modules.MSM2_0_dynamic', module_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module.MSM, 'optimized'
+
+    raise ValueError("Unsupported msm.module '{}'. Use 'original' or 'optimized'.".format(choice))
 
 
 class MuSc():
@@ -61,6 +83,8 @@ class MuSc():
                     self.categories = _CLASSNAMES_visa
                 elif self.dataset == 'mvtec_ad':
                     self.categories = _CLASSNAMES_mvtec_ad
+                elif self.dataset == 'mvtec_loco':
+                    self.categories = _CLASSNAMES_mvtec_loco
                 elif self.dataset == 'btad':
                     self.categories = _CLASSNAMES_btad
                 elif self.dataset == 'miniled_ad':
@@ -77,6 +101,8 @@ class MuSc():
         self.features_list = [l+1 for l in cfg['models']['feature_layers']]
         self.divide_num = cfg['datasets']['divide_num']
         self.r_list = cfg['models']['r_list']
+        self.MSM, self.msm_module_name = load_msm_function(cfg.get('msm', {}))
+        print(f"MSM module: {self.msm_module_name}")
         self.output_dir = os.path.join(cfg['testing']['output_dir'], self.dataset, self.model_name, 'imagesize{}'.format(self.image_size))
         os.makedirs(self.output_dir, exist_ok=True)
         self.load_backbone()
@@ -102,6 +128,10 @@ class MuSc():
                                                 divide_num=divide_num, divide_iter=divide_iter, random_seed=self.seed)
         elif self.dataset == 'mvtec_ad':
             test_dataset = mvtec.MVTecDataset(source=self.path, split=mvtec.DatasetSplit.TEST,
+                                            classname=category, resize=self.image_size, imagesize=self.image_size, clip_transformer=self.preprocess,
+                                                divide_num=divide_num, divide_iter=divide_iter, random_seed=self.seed)
+        elif self.dataset == 'mvtec_loco':
+            test_dataset = mvtec_loco.MVTecLOCODataset(source=self.path, split=mvtec_loco.DatasetSplit.TEST,
                                             classname=category, resize=self.image_size, imagesize=self.image_size, clip_transformer=self.preprocess,
                                                 divide_num=divide_num, divide_iter=divide_iter, random_seed=self.seed)
         elif self.dataset == 'btad':
@@ -311,9 +341,9 @@ class MuSc():
                 ablation_detail_start = 1       # 1: Skip Level 0 (Noise)
                 ablation_keep_ll = True         # True: Include Low Frequency Approximation
 
-                ablation_gamma   = 2.0          # Moderate Gamma
+                ablation_gamma   =2.0          # Moderate Gamma
                 ablation_use_spot_weight = True  # Suppress patterns found in ANY other image (Occasional Normal Pattern)
-                ablation_use_morphology = False  # Toggle for Morphological Optimization (Opening/Closing + Smoothing)
+                ablation_use_morphology = True  # Toggle for Morphological Optimization (Opening/Closing + Smoothing)
                 
                 # Morphological Parameters
                 ablation_morph_open_k = 1       # Opening kernel size (remove noise). 1 = disabled.
@@ -388,7 +418,7 @@ class MuSc():
                         if not (is_wtconv and is_target_category):
                             current_use_spot_weight = False
                             
-                    anomaly_maps_msm = MSM(Z=Z, device=self.device, topmin_min=0, topmin_max=0.3, 
+                    anomaly_maps_msm = self.MSM(Z=Z, device=self.device, topmin_min=0, topmin_max=0.3, 
                                            gamma=ablation_gamma, use_spot_weight=current_use_spot_weight)  #调用MSM算法生成异常图（同一层互相计算）
                     anomaly_maps_l = torch.cat((anomaly_maps_l, anomaly_maps_msm.unsqueeze(0).cpu()), dim=0)  # 存储不同层的MSM异常图结果
                     torch.cuda.empty_cache()
