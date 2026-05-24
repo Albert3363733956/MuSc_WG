@@ -8,7 +8,10 @@ import torch.optim as optim
 import torch.nn.functional as F
 import numpy as np
 from tqdm import tqdm
-from datasets.mvtec import FSAD_Dataset_train, FSAD_Dataset_test
+from datasets.mvtec import FSAD_Dataset_train as MVTec_Dataset_train, FSAD_Dataset_test as MVTec_Dataset_test
+from datasets.visa import FSAD_Dataset_train as Visa_Dataset_train, FSAD_Dataset_test as Visa_Dataset_test
+from datasets.btad import FSAD_Dataset_train as BTAD_Dataset_train, FSAD_Dataset_test as BTAD_Dataset_test
+from datasets.mvtec_loco import FSAD_Dataset_train as MVTecLOCO_Dataset_train, FSAD_Dataset_test as MVTecLOCO_Dataset_test
 from utils.utils import time_file_str, time_string, convert_secs2time, AverageMeter, print_log
 from models.siamese import Encoder, Predictor
 from models.stn import stn_net
@@ -21,6 +24,16 @@ import warnings
 warnings.filterwarnings("ignore")
 use_cuda = torch.cuda.is_available()
 device = torch.device('cuda' if use_cuda else 'cpu')
+
+
+def get_dataset_classes(data_type):
+    if data_type.lower() == 'visa':
+        return Visa_Dataset_train, Visa_Dataset_test
+    if data_type.lower() == 'btad':
+        return BTAD_Dataset_train, BTAD_Dataset_test
+    if data_type.lower() == 'mvtec_loco':
+        return MVTecLOCO_Dataset_train, MVTecLOCO_Dataset_test
+    return MVTec_Dataset_train, MVTec_Dataset_test
 
 def main():
     parser = argparse.ArgumentParser(description='Registration based Few-Shot Anomaly Detection')
@@ -76,9 +89,10 @@ def main():
 
     print('Loading Datasets')
     kwargs = {'num_workers': 4, 'pin_memory': True} if use_cuda else {}
-    train_dataset = FSAD_Dataset_train(args.data_path, class_name=args.obj, is_train=True, resize=args.img_size, shot=args.shot, batch=args.batch_size)
+    Dataset_train, Dataset_test = get_dataset_classes(args.data_type)
+    train_dataset = Dataset_train(args.data_path, class_name=args.obj, is_train=True, resize=args.img_size, shot=args.shot, batch=args.batch_size)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=1, shuffle=True, **kwargs)
-    test_dataset = FSAD_Dataset_test(args.data_path, class_name=args.obj, is_train=False, resize=args.img_size, shot=args.shot)
+    test_dataset = Dataset_test(args.data_path, class_name=args.obj, is_train=False, resize=args.img_size, shot=args.shot)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=1, shuffle=False, **kwargs)
 
     # start training

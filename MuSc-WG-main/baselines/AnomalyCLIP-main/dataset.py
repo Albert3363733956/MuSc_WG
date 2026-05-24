@@ -18,6 +18,8 @@ def generate_class_info(dataset_name):
         obj_list = ['bracket_black', 'bracket_brown', 'bracket_white', 'connector', 'metal_plate', 'tubes']
     elif dataset_name == 'btad':
         obj_list = ['01', '02', '03']
+    elif dataset_name == 'mvtec_loco':
+        obj_list = ['breakfast_box', 'juice_bottle', 'pushpins', 'screw_bag', 'splicing_connectors']
     elif dataset_name == 'DAGM_KaggleUpload':
         obj_list = ['Class1','Class2','Class3','Class4','Class5','Class6','Class7','Class8','Class9','Class10']
     elif dataset_name == 'SDD':

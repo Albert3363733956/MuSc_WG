@@ -7,7 +7,10 @@ import numpy as np
 from torch.optim import optimizer
 import torch.nn.functional as F
 from tqdm import tqdm
-from datasets.mvtec import FSAD_Dataset_train, FSAD_Dataset_test
+from datasets.mvtec import FSAD_Dataset_test as MVTec_Dataset_test
+from datasets.visa import FSAD_Dataset_test as Visa_Dataset_test
+from datasets.btad import FSAD_Dataset_test as BTAD_Dataset_test
+from datasets.mvtec_loco import FSAD_Dataset_test as MVTecLOCO_Dataset_test
 from utils.utils import time_file_str, time_string, convert_secs2time, AverageMeter, print_log
 from models.siamese import Encoder, Predictor
 from models.stn import stn_net
@@ -20,6 +23,16 @@ import warnings
 warnings.filterwarnings("ignore")
 use_cuda = torch.cuda.is_available()
 device = torch.device('cuda' if use_cuda else 'cpu')
+
+
+def get_test_dataset_class(data_type):
+    if data_type.lower() == 'visa':
+        return Visa_Dataset_test
+    if data_type.lower() == 'btad':
+        return BTAD_Dataset_test
+    if data_type.lower() == 'mvtec_loco':
+        return MVTecLOCO_Dataset_test
+    return MVTec_Dataset_test
 
 def main():
     parser = argparse.ArgumentParser(description='RegAD on MVtec')
@@ -68,7 +81,8 @@ def main():
     print(f'\n[INFO] Starting Testing for Dataset: {args.data_path.split("/")[-1]} | Class: {args.obj} | Shot: {args.shot}')
     print('Loading Datasets')
     kwargs = {'num_workers': 4, 'pin_memory': True} if use_cuda else {}
-    test_dataset = FSAD_Dataset_test(args.data_path, class_name=args.obj, is_train=False, resize=args.img_size, shot=args.shot)
+    Dataset_test = get_test_dataset_class(args.data_type)
+    test_dataset = Dataset_test(args.data_path, class_name=args.obj, is_train=False, resize=args.img_size, shot=args.shot)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=1, shuffle=False, **kwargs)
 
     print('Loading Fixed Support Set')

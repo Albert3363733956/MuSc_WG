@@ -174,9 +174,46 @@ class MVTecDataset(data.Dataset):
 				'img_path': os.path.join(self.root, img_path)}
 
 
+class _MetaMaskDataset(MVTecDataset):
+	def combine_img(self, cls_name):
+		img_info = random.sample([data for data in self.data_all if data['cls_name'] == cls_name], 4)
+		img_ls = []
+		mask_ls = []
+
+		for data in img_info:
+			img = Image.open(os.path.join(self.root, data['img_path']))
+			img_ls.append(img)
+			if data['anomaly'] == 0 or not data['mask_path']:
+				img_mask = Image.fromarray(np.zeros((img.size[0], img.size[1])), mode='L')
+			else:
+				img_mask = np.array(Image.open(os.path.join(self.root, data['mask_path'])).convert('L')) > 0
+				img_mask = Image.fromarray(img_mask.astype(np.uint8) * 255, mode='L')
+			mask_ls.append(img_mask)
+
+		image_width, image_height = img_ls[0].size
+		result_image = Image.new("RGB", (2 * image_width, 2 * image_height))
+		result_mask = Image.new("L", (2 * image_width, 2 * image_height))
+		for i, img in enumerate(img_ls):
+			row = i // 2
+			col = i % 2
+			x = col * image_width
+			y = row * image_height
+			result_image.paste(img, (x, y))
+			result_mask.paste(mask_ls[i], (x, y))
+		return result_image, result_mask
+
+
 class MicroledDataset(MVTecDataset):
     pass
 
 
 class MiniledDataset(MVTecDataset):
+    pass
+
+
+class BTADDataset(_MetaMaskDataset):
+    pass
+
+
+class MVTecLOCODataset(_MetaMaskDataset):
     pass

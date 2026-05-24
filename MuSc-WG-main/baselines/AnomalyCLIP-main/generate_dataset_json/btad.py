@@ -44,5 +44,5 @@ class BtadSolver(object):
         print('normal_samples', normal_samples, 'anomaly_samples', anomaly_samples)
 
 if __name__ == '__main__':
-    runner = BtadSolver(root='/remote-home/iot_zhouqihang/data/BTech_Dataset_transformed')
+    runner = BtadSolver(root=r'C:\Users\Administrator\Desktop\dataset\BTech_Dataset_transformed')
     runner.run()

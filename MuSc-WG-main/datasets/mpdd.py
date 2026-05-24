@@ -1,25 +1,33 @@
 import os
 from enum import Enum
+import random
+
 import PIL
 import torch
 from torchvision import transforms
-import random
 
-# _CLASSNAMES = ["zipper", "capsule", "transistor"]  # "zipper", "capsule", "transistor"
 
-_CLASSNAMES = ["bottle", "cable", "capsule", "carpet", "grid",
-            "hazelnut", "leather", "metal_nut", "pill", "screw",
-            "tile", "toothbrush", "transistor", "wood", "zipper"]
+_CLASSNAMES = [
+    "bracket_black",
+    "bracket_brown",
+    "bracket_white",
+    "connector",
+    "metal_plate",
+    "tubes",
+]
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
+IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff")
+
 
 class DatasetSplit(Enum):
     TRAIN = "train"
     VAL = "val"
     TEST = "test"
 
-class MVTecDataset(torch.utils.data.Dataset):
+
+class MPDDDataset(torch.utils.data.Dataset):
     def __init__(
         self,
         source,
@@ -39,62 +47,67 @@ class MVTecDataset(torch.utils.data.Dataset):
         self.split = split
         self.classnames_to_use = [classname] if classname is not None else _CLASSNAMES
 
-        self.imgpaths_per_class, self.data_to_iterate = self.get_image_data()  # 获取所有图像路径
+        self.imgpaths_per_class, self.data_to_iterate = self.get_image_data()
         if divide_num > 1:
-            # divide into subsets
-            self.data_to_iterate = self.sub_datasets(self.data_to_iterate, divide_num, divide_iter, random_seed)  # 划分数据子集
+            self.data_to_iterate = self.sub_datasets(
+                self.data_to_iterate,
+                divide_num,
+                divide_iter,
+                random_seed,
+            )
 
         if k_shot > 0:
-            # few-shot
             torch.manual_seed(random_seed)
-            if k_shot >= len(self.data_to_iterate):
-                pass
-            else:
+            if k_shot < len(self.data_to_iterate):
                 indices = torch.randint(0, len(self.data_to_iterate), (k_shot,))
                 self.data_to_iterate = [self.data_to_iterate[i] for i in indices]
+
         if clip_transformer is None:
-            self.transform_img = [
-                transforms.Resize((resize,resize)),
-                transforms.CenterCrop(imagesize),
-                transforms.ToTensor(),
-                transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
-            ]
-            self.transform_img = transforms.Compose(self.transform_img)
+            self.transform_img = transforms.Compose(
+                [
+                    transforms.Resize((resize, resize)),
+                    transforms.CenterCrop(imagesize),
+                    transforms.ToTensor(),
+                    transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
+                ]
+            )
         else:
             self.transform_img = clip_transformer
-            
-        self.transform_mask = [
-            transforms.Resize((resize,resize)),
-            transforms.CenterCrop(imagesize),
-            transforms.ToTensor(),
-        ]
-        self.transform_mask = transforms.Compose(self.transform_mask)
+
+        self.transform_mask = transforms.Compose(
+            [
+                transforms.Resize((resize, resize)),
+                transforms.CenterCrop(imagesize),
+                transforms.ToTensor(),
+            ]
+        )
 
         self.imagesize = (3, imagesize, imagesize)
-    
+
     def sub_datasets(self, full_datasets, divide_num, divide_iter, random_seed=42):
-        # uniform division
         if divide_num == 0:
             return full_datasets
         random.seed(random_seed)
 
         id_dict = {}
-        for i in range(len(full_datasets)):
-            image_path = os.path.normpath(full_datasets[i][2])
-            anomaly_type = os.path.basename(os.path.dirname(image_path))
-            if anomaly_type not in id_dict.keys():
-                id_dict[anomaly_type] = []
-            id_dict[anomaly_type].append(i)
+        for index, sample in enumerate(full_datasets):
+            anomaly_type = os.path.basename(os.path.dirname(sample[2]))
+            id_dict.setdefault(anomaly_type, []).append(index)
 
         sub_id_list = []
-        for k in id_dict.keys():
-            type_id_list = id_dict[k]
+        for type_id_list in id_dict.values():
             random.shuffle(type_id_list)
-            devide_list = [type_id_list[i:i+divide_num] for i in range(0, len(type_id_list), divide_num)]
-            sub_list = [devide_list[i][divide_iter] for i in range(len(devide_list)) if len(devide_list[i])>divide_iter]
-            sub_id_list.extend(sub_list)
+            divided_list = [
+                type_id_list[i : i + divide_num]
+                for i in range(0, len(type_id_list), divide_num)
+            ]
+            sub_id_list.extend(
+                group[divide_iter]
+                for group in divided_list
+                if len(group) > divide_iter
+            )
 
-        return [full_datasets[id] for id in sub_id_list]
+        return [full_datasets[index] for index in sub_id_list]
 
     def __getitem__(self, idx):
         classname, anomaly, image_path, mask_path = self.data_to_iterate[idx]
@@ -106,7 +119,7 @@ class MVTecDataset(torch.utils.data.Dataset):
             mask = self.transform_mask(mask)
         else:
             mask = torch.zeros([1, *image.size()[1:]])
-    
+
         return {
             "image": image,
             "mask": mask,
@@ -120,40 +133,62 @@ class MVTecDataset(torch.utils.data.Dataset):
     def get_image_data(self):
         imgpaths_per_class = {}
         maskpaths_per_class = {}
-        
+
         for classname in self.classnames_to_use:
             classpath = os.path.join(self.source, classname, self.split.value)
             maskpath = os.path.join(self.source, classname, "ground_truth")
-            anomaly_types = os.listdir(classpath)
+            anomaly_types = sorted(os.listdir(classpath))
 
             imgpaths_per_class[classname] = {}
             maskpaths_per_class[classname] = {}
 
             for anomaly in anomaly_types:
                 anomaly_path = os.path.join(classpath, anomaly)
-                anomaly_files = sorted(os.listdir(anomaly_path))
+                anomaly_files = self._list_image_files(anomaly_path)
                 imgpaths_per_class[classname][anomaly] = [
-                    os.path.join(anomaly_path, x) for x in anomaly_files
+                    os.path.join(anomaly_path, filename) for filename in anomaly_files
                 ]
 
                 if self.split == DatasetSplit.TEST and anomaly != "good":
                     anomaly_mask_path = os.path.join(maskpath, anomaly)
-                    anomaly_mask_files = sorted(os.listdir(anomaly_mask_path))
-                    maskpaths_per_class[classname][anomaly] = [
-                        os.path.join(anomaly_mask_path, x) for x in anomaly_mask_files
-                    ]
+                    maskpaths_per_class[classname][anomaly] = self._build_mask_lookup(
+                        anomaly_mask_path
+                    )
                 else:
-                    maskpaths_per_class[classname]["good"] = None
+                    maskpaths_per_class[classname][anomaly] = {}
 
         data_to_iterate = []
         for classname in sorted(imgpaths_per_class.keys()):
             for anomaly in sorted(imgpaths_per_class[classname].keys()):
-                for i, image_path in enumerate(imgpaths_per_class[classname][anomaly]):
+                for image_path in imgpaths_per_class[classname][anomaly]:
                     data_tuple = [classname, anomaly, image_path]
                     if self.split == DatasetSplit.TEST and anomaly != "good":
-                        data_tuple.append(maskpaths_per_class[classname][anomaly][i])
+                        image_stem = os.path.splitext(os.path.basename(image_path))[0]
+                        mask_path = maskpaths_per_class[classname][anomaly].get(image_stem)
+                        if mask_path is None:
+                            raise FileNotFoundError(
+                                f"Missing MPDD mask for image: {image_path}"
+                            )
+                        data_tuple.append(mask_path)
                     else:
                         data_tuple.append(None)
                     data_to_iterate.append(data_tuple)
 
         return imgpaths_per_class, data_to_iterate
+
+    @staticmethod
+    def _list_image_files(path):
+        return sorted(
+            filename
+            for filename in os.listdir(path)
+            if filename.lower().endswith(IMAGE_EXTENSIONS)
+        )
+
+    @staticmethod
+    def _build_mask_lookup(path):
+        lookup = {}
+        for filename in MPDDDataset._list_image_files(path):
+            stem = os.path.splitext(filename)[0]
+            image_stem = stem[:-5] if stem.endswith("_mask") else stem
+            lookup[image_stem] = os.path.join(path, filename)
+        return lookup

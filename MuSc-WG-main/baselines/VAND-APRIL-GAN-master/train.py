@@ -13,7 +13,7 @@ import torchvision.transforms as transforms
 import logging
 
 import open_clip
-from dataset import VisaDataset, MVTecDataset
+from dataset import VisaDataset, MVTecDataset, BTADDataset, MVTecLOCODataset
 from model import LinearLayer
 from loss import FocalLoss, BinaryDiceLoss
 from prompt_ensemble import encode_text_with_prompt_ensemble
@@ -81,6 +81,12 @@ def train(args):
     if args.dataset == 'mvtec':
         train_data = MVTecDataset(root=args.train_data_path, transform=preprocess, target_transform=transform,
                                   aug_rate=args.aug_rate)
+    elif args.dataset == 'btad':
+        train_data = BTADDataset(root=args.train_data_path, transform=preprocess, target_transform=transform,
+                                 aug_rate=args.aug_rate)
+    elif args.dataset == 'mvtec_loco':
+        train_data = MVTecLOCODataset(root=args.train_data_path, transform=preprocess, target_transform=transform,
+                                      aug_rate=args.aug_rate)
     else:
         train_data = VisaDataset(root=args.train_data_path, transform=preprocess, target_transform=transform)
     train_dataloader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)

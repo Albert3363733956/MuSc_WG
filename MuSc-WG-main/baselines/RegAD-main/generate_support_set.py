@@ -1,4 +1,5 @@
 import os
+import json
 import random
 import argparse
 import torch
@@ -11,13 +12,23 @@ def generate_support_set(data_path, class_name, shot, inferences, save_dir):
     """
     os.makedirs(save_dir, exist_ok=True)
     
-    img_dir_train = os.path.join(data_path, class_name, 'train', 'good')
-    img_num = sorted(os.listdir(img_dir_train))
-
+    meta_path = os.path.join(data_path, 'meta.json')
     data_train = []
-    for img_one in img_num:
-        img_dir_one = os.path.join(img_dir_train, img_one)
-        data_train.append(img_dir_one)
+    if os.path.isfile(meta_path):
+        with open(meta_path, 'r') as f:
+            meta = json.load(f)
+        for item in meta.get('train', {}).get(class_name, []):
+            if int(item.get('anomaly', 0)) == 0:
+                data_train.append(os.path.normpath(os.path.join(data_path, item['img_path'])))
+    else:
+        img_dir_train = os.path.join(data_path, class_name, 'train', 'good')
+        img_num = sorted(os.listdir(img_dir_train))
+        for img_one in img_num:
+            img_dir_one = os.path.join(img_dir_train, img_one)
+            data_train.append(img_dir_one)
+
+    if len(data_train) == 0:
+        raise RuntimeError(f'No normal training images found for class {class_name} in {data_path}')
         
     transform_x = transforms.Compose([
         transforms.Resize((224, 224), getattr(Image, 'Resampling', Image).LANCZOS),

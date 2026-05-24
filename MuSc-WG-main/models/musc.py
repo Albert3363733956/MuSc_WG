@@ -14,6 +14,8 @@ import datasets.visa as visa
 from datasets.visa import _CLASSNAMES as _CLASSNAMES_visa
 import datasets.btad as btad
 from datasets.btad import _CLASSNAMES as _CLASSNAMES_btad
+import datasets.mpdd as mpdd
+from datasets.mpdd import _CLASSNAMES as _CLASSNAMES_mpdd
 import datasets.miniled as miniled
 from datasets.miniled import _CLASSNAMES as _CLASSNAMES_miniled
 import datasets.microled as microled
@@ -38,6 +40,23 @@ from sklearn.manifold import TSNE
 
 import warnings
 warnings.filterwarnings("ignore")
+
+
+def normalize_dataset_name(dataset_name):
+    dataset_key = str(dataset_name).lower()
+    aliases = {
+        'mvtec': 'mvtec_ad',
+        'mvtec_ad': 'mvtec_ad',
+        'mvtec_loco': 'mvtec_loco',
+        'visa': 'visa',
+        'btad': 'btad',
+        'mpdd': 'mpdd',
+        'miniled': 'miniled_ad',
+        'miniled_ad': 'miniled_ad',
+        'microled': 'microled_ad',
+        'microled_ad': 'microled_ad',
+    }
+    return aliases.get(dataset_key, dataset_key)
 
 
 def load_msm_function(msm_cfg):
@@ -67,7 +86,7 @@ class MuSc():
         print(f"Active device: {self.device}")
 
         self.path = cfg['datasets']['data_path']
-        self.dataset = cfg['datasets']['dataset_name']
+        self.dataset = normalize_dataset_name(cfg['datasets']['dataset_name'])
         self.vis = cfg['testing']['vis']
         self.vis_type = cfg['testing']['vis_type']
         self.save_excel = cfg['testing']['save_excel']
@@ -87,6 +106,8 @@ class MuSc():
                     self.categories = _CLASSNAMES_mvtec_loco
                 elif self.dataset == 'btad':
                     self.categories = _CLASSNAMES_btad
+                elif self.dataset == 'mpdd':
+                    self.categories = _CLASSNAMES_mpdd
                 elif self.dataset == 'miniled_ad':
                     self.categories = _CLASSNAMES_miniled
                 elif self.dataset == 'microled_ad':
@@ -138,6 +159,10 @@ class MuSc():
             test_dataset = btad.BTADDataset(source=self.path, split=btad.DatasetSplit.TEST,
                                             classname=category, resize=self.image_size, imagesize=self.image_size, clip_transformer=self.preprocess,
                                                 divide_num=divide_num, divide_iter=divide_iter, random_seed=self.seed)
+        elif self.dataset == 'mpdd':
+            test_dataset = mpdd.MPDDDataset(source=self.path, split=mpdd.DatasetSplit.TEST,
+                                            classname=category, resize=self.image_size, imagesize=self.image_size, clip_transformer=self.preprocess,
+                                                divide_num=divide_num, divide_iter=divide_iter, random_seed=self.seed)
         elif self.dataset == 'miniled_ad':
             test_dataset = miniled.MiniledDataset(source=self.path, split=miniled.DatasetSplit.TEST,
                                             classname=category, resize=self.image_size, imagesize=self.image_size, clip_transformer=self.preprocess,
@@ -146,6 +171,8 @@ class MuSc():
             test_dataset = microled.MicroledDataset(source=self.path, split=microled.DatasetSplit.TEST,
                                             classname=category, resize=self.image_size, imagesize=self.image_size, clip_transformer=self.preprocess,
                                                 divide_num=divide_num, divide_iter=divide_iter, random_seed=self.seed)
+        else:
+            raise ValueError(f"Unsupported dataset_name: {self.dataset}")
         return test_dataset
 
 
@@ -341,15 +368,15 @@ class MuSc():
                 ablation_detail_start = 1       # 1: Skip Level 0 (Noise)
                 ablation_keep_ll = True         # True: Include Low Frequency Approximation
 
-                ablation_gamma   =2.0          # Moderate Gamma
+                ablation_gamma   =1.5          # Moderate Gamma
                 ablation_use_spot_weight = True  # Suppress patterns found in ANY other image (Occasional Normal Pattern)
-                ablation_use_morphology = True  # Toggle for Morphological Optimization (Opening/Closing + Smoothing)
+                ablation_use_morphology = False  # Toggle for Morphological Optimization (Opening/Closing + Smoothing)
                 
                 # Morphological Parameters
                 ablation_morph_open_k = 1       # Opening kernel size (remove noise). 1 = disabled.
-                ablation_morph_close_k = 3      # Closing kernel size (fill gaps). 3 is gentle.
+                ablation_morph_close_k = 5      # Closing kernel size (fill gaps). 3 is gentle.
                 ablation_morph_smooth_k = 3     # Gaussian smoothing kernel size (remove blockiness).
-                ablation_morph_sigma = 1      # Gaussian blur standard deviation.
+                ablation_morph_sigma = 0.3      # Gaussian blur standard deviation.
                 
                 # print(f"Using Original LNAMD with r={r}, ablation_use_spot_weight={ablation_use_spot_weight}, gamma={ablation_gamma}")
                 # LNAMD_r = LNAMD(device=self.device, r=r, feature_dim=feature_dim, feature_layer=self.features_list)
@@ -411,9 +438,14 @@ class MuSc():
                     # Apply spot weighting conditionally
                     current_use_spot_weight = ablation_use_spot_weight
                     if current_use_spot_weight:
-                        # Only apply if using WTConvLNAMDStatic and for specific categories
+                        # Only apply if using WTConvLNAMDStatic and datasets/categories where
+                        # occasional normal-pattern suppression is intended.
                         is_wtconv = isinstance(LNAMD_r, WTConvLNAMDStatic)
-                        is_target_category = (self.dataset == 'mvtec_ad' and category in ['screw', 'toothbrush', 'zipper'])
+                        is_target_category = (
+                            (self.dataset == 'mvtec_ad' and category in ['screw', 'toothbrush', 'zipper'])
+                            or self.dataset == 'mpdd'
+                            or self.dataset == 'mvtec_loco'
+                        )
                         
                         if not (is_wtconv and is_target_category):
                             current_use_spot_weight = False

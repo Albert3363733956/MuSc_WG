@@ -16,8 +16,10 @@ def generate_class_info(dataset_name):
                     'pcb1', 'pcb2', 'pcb3', 'pcb4', 'pipe_fryum']
     elif dataset_name == 'MPDD':
         obj_list = ['bracket_black', 'bracket_brown', 'bracket_white', 'connector', 'metal_plate', 'tubes']
-    elif dataset_name == 'BTAD':
+    elif dataset_name in ('BTAD', 'btad'):
         obj_list = ['01', '02', '03']
+    elif dataset_name == 'mvtec_loco':
+        obj_list = ['breakfast_box', 'juice_bottle', 'pushpins', 'screw_bag', 'splicing_connectors']
     elif dataset_name == 'DAGM':
         obj_list = ['Class1','Class2','Class3','Class4','Class5','Class6','Class7','Class8','Class9','Class10']
     elif dataset_name in ('SDD', 'KSDD', 'KSDD2'):

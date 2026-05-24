@@ -410,6 +410,12 @@ def test(args,):
         # You may need to import or implement MiniLEDDataset if it differs, for now using MVTecDataset format
         test_data = MVTecDataset(root=dataset_dir, transform=preprocess, target_transform=transform,
                                  aug_rate=-1, mode='test', obj_name=args.class_name)
+    elif dataset_name in ['btad', 'mvtec_loco']:
+        obj_list = list(json.load(open(f'{dataset_dir}/meta.json', 'r'))['test'].keys())
+        if args.class_name != "all":
+            obj_list = [args.class_name]
+        test_data = MVTecDataset(root=dataset_dir, transform=preprocess, target_transform=transform,
+                                 aug_rate=-1, mode='test', obj_name=args.class_name)
     test_dataloader = torch.utils.data.DataLoader(test_data, batch_size=32, shuffle=False)
 
 

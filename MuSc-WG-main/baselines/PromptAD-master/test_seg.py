@@ -103,7 +103,7 @@ def str2bool(v):
 
 def get_args():
     parser = argparse.ArgumentParser(description='Anomaly detection')
-    parser.add_argument('--dataset', type=str, default='mvtec', choices=['mvtec', 'visa'])
+    parser.add_argument('--dataset', type=str, default='mvtec', choices=['mvtec', 'visa', 'btad', 'mvtec_loco'])
     parser.add_argument('--class_name', type=str, default='transistor')
 
     parser.add_argument('--img-resize', type=int, default=240)

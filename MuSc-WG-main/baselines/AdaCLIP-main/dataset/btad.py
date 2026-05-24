@@ -6,7 +6,7 @@ from config import DATA_ROOT
 BTAD_CLS_NAMES = [
     '01', '02', '03',
 ]
-BTAD_ROOT = os.path.join(DATA_ROOT, 'BTech_Dataset_transformed')
+BTAD_ROOT = r'C:\Users\Administrator\Desktop\dataset\BTech_Dataset_transformed'
 
 class BTADDataset(BaseDataset):
     def __init__(self, transform, target_transform, clsnames=BTAD_CLS_NAMES, aug_rate=0.0, root=BTAD_ROOT, training=True):

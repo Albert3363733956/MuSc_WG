@@ -6,6 +6,8 @@ from .dataset import CLIPDataset
 from .mvtec import load_mvtec, mvtec_classes
 from .visa import load_visa, visa_classes
 from .led import load_led, microled_classes, miniled_classes
+from .btad import load_btad, btad_classes
+from .mvtec_loco import load_mvtec_loco, mvtec_loco_classes
 
 
 mean_train = [0.48145466, 0.4578275, 0.40821073]
@@ -16,6 +18,8 @@ load_function_dict = {
     'visa': load_visa,
     'microled': load_led,
     'miniled': load_led,
+    'btad': load_btad,
+    'mvtec_loco': load_mvtec_loco,
 }
 
 dataset_classes = {
@@ -23,6 +27,8 @@ dataset_classes = {
     'visa': visa_classes,
     'microled': microled_classes,
     'miniled': miniled_classes,
+    'btad': btad_classes,
+    'mvtec_loco': mvtec_loco_classes,
 }
 
 def denormalization(x):

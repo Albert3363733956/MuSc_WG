@@ -1,11 +1,15 @@
 import os
 import subprocess
 import sys
+import json
 
 # Configuration
 device = "0"
 # Path to datasets
 data_root_mvtec = "../../data/mvtec_anomaly_detection"
+data_root_visa = r"C:\Users\Administrator\Desktop\dataset\visa"
+data_root_btad = r"C:\Users\Administrator\Desktop\dataset\BTech_Dataset_transformed"
+data_root_mvtec_loco = r"C:\Users\Administrator\Desktop\dataset\MVTec_loco"
 data_root_microled = "../../data/microled_AD"
 data_root_miniled = "../../data/miniled_AD"
 
@@ -17,8 +21,11 @@ output_dir = "../../output/PatchCore"
 # We map the datasets as "mvtec" to reuse the MVTecDataset class structure for microled/miniled as well.
 test_configs = [
     # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "transistor"}, 
-    {"dataset": "microled", "path": data_root_microled, "class_name": "all"}, 
-    {"dataset": "miniled", "path": data_root_miniled, "class_name": "all"},   
+    {"dataset": "visa", "path": data_root_visa, "class_name": "all"},
+    # {"dataset": "btad", "path": data_root_btad, "class_name": "all"},
+    # {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all"},
+    # {"dataset": "microled", "path": data_root_microled, "class_name": "all"},
+    # {"dataset": "miniled", "path": data_root_miniled, "class_name": "all"},
 ]
 
 # We map all to "mvtec" format in patchcore, but pass the different paths.
@@ -70,14 +77,19 @@ for config in test_configs:
     
     # Subdatasets argument
     if target_class.lower() == "all":
-        classes = [d for d in os.listdir(data_root) if os.path.isdir(os.path.join(data_root, d))]
+        meta_path = os.path.join(data_root, "meta.json")
+        if os.path.isfile(meta_path):
+            with open(meta_path, "r") as f:
+                classes = sorted(json.load(f)["test"].keys())
+        else:
+            classes = [d for d in os.listdir(data_root) if os.path.isdir(os.path.join(data_root, d))]
         for c in classes:
             cmd.extend(["-d", c])
     else:
         cmd.extend(["-d", target_class])
 
     cmd.extend([
-        "mvtec", # Dataset type format to use (we reuse mvtec format for miniled/microled)
+        test_dataset if test_dataset.lower() in ["visa", "btad", "mvtec_loco"] else "mvtec",
         data_root
     ])
     

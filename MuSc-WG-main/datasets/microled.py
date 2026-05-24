@@ -14,14 +14,17 @@ import random
 #             "microled_TypeA_17", "microled_TypeA_18", "microled_TypeA_19", "microled_TypeA_20"]
 
 
-_CLASSNAMES = ["microled_TypeA_1", "microled_TypeA_2", "microled_TypeA_3", "microled_TypeA_4",
-            "microled_TypeA_5", "microled_TypeA_6", "microled_TypeA_7", "microled_TypeA_8",
-            "microled_TypeA_9", "microled_TypeA_10", "microled_TypeA_11", "microled_TypeA_12",
-            "microled_TypeA_13", "microled_TypeA_14", "microled_TypeA_15", "microled_TypeA_16",
-            "microled_TypeA_17", "microled_TypeA_18", "microled_TypeA_19", "microled_TypeA_20",
-            "microled_TypeA_21", "microled_TypeA_22", "microled_TypeA_23", "microled_TypeA_24",
-            "microled_TypeA_25", "microled_TypeA_26", "microled_TypeA_27", "microled_TypeA_28",
-             "microled_TypeA_29", "microled_TypeA_30",]
+# _CLASSNAMES = ["microled_TypeA_1", "microled_TypeA_2", "microled_TypeA_3", "microled_TypeA_4",
+#             "microled_TypeA_5", "microled_TypeA_6", "microled_TypeA_7", "microled_TypeA_8",
+#             "microled_TypeA_9", "microled_TypeA_10", "microled_TypeA_11", "microled_TypeA_12",
+#             "microled_TypeA_13", "microled_TypeA_14", "microled_TypeA_15", "microled_TypeA_16",
+#             "microled_TypeA_17", "microled_TypeA_18", "microled_TypeA_19", "microled_TypeA_20",
+#             "microled_TypeA_21", "microled_TypeA_22", "microled_TypeA_23", "microled_TypeA_24",
+#             "microled_TypeA_25", "microled_TypeA_26", "microled_TypeA_27", "microled_TypeA_28",
+#              "microled_TypeA_29", "microled_TypeA_30",]
+
+_CLASSNAMES = ["microled_TypeA_0","microled_TypeA_1", "microled_TypeA_2", "microled_TypeA_3", "microled_TypeA_4",
+            "microled_TypeA_5", "microled_TypeA_6", "microled_TypeA_7", "microled_TypeA_8","microled_TypeA_9"]
 
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
@@ -96,7 +99,8 @@ class MicroledDataset(torch.utils.data.Dataset):
 
         id_dict = {}
         for i in range(len(full_datasets)):
-            anomaly_type = full_datasets[i][2].split('/')[-2]
+            image_path = os.path.normpath(full_datasets[i][2])
+            anomaly_type = os.path.basename(os.path.dirname(image_path))
             if anomaly_type not in id_dict.keys():
                 id_dict[anomaly_type] = []
             id_dict[anomaly_type].append(i)

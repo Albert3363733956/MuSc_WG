@@ -3,7 +3,7 @@ import json
 import random
 from config import DATA_ROOT
 
-BTAD_ROOT = os.path.join(DATA_ROOT, 'BTech_Dataset_transformed')
+BTAD_ROOT = r'C:\Users\Administrator\Desktop\dataset\BTech_Dataset_transformed'
 
 class BTADSolver(object):
     CLSNAMES = [

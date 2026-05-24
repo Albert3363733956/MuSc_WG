@@ -6,6 +6,8 @@ import sys
 device = "0"
 # Path to datasets
 data_root_mvtec = "../../data/mvtec_anomaly_detection"
+data_root_btad = r"C:\Users\Administrator\Desktop\dataset\BTech_Dataset_transformed"
+data_root_mvtec_loco = r"C:\Users\Administrator\Desktop\dataset\MVTec_loco"
 data_root_microled = "../../data/microled_AD"
 data_root_miniled = "../../data/miniled_AD"
 
@@ -13,6 +15,8 @@ data_root_miniled = "../../data/miniled_AD"
 # Uncomment the configuration you want to run
 test_configs = [
     # {"dataset": "mvtec", "path": data_root_mvtec, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"}, 
+    # {"dataset": "btad", "path": data_root_btad, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
+    # {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
     {"dataset": "microled", "path": data_root_microled, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"}, 
     {"dataset": "miniled", "path": data_root_miniled, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},   
 ]

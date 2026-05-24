@@ -31,12 +31,14 @@ mvtec = None
 mvtec_loco = None
 visa = None
 btad = None
+mpdd = None
 miniled = None
 microled = None
 _CLASSNAMES_mvtec_ad = None
 _CLASSNAMES_mvtec_loco = None
 _CLASSNAMES_visa = None
 _CLASSNAMES_btad = None
+_CLASSNAMES_mpdd = None
 _CLASSNAMES_miniled = None
 _CLASSNAMES_microled = None
 
@@ -52,12 +54,14 @@ def load_project_modules():
     global mvtec_loco
     global visa
     global btad
+    global mpdd
     global miniled
     global microled
     global _CLASSNAMES_mvtec_ad
     global _CLASSNAMES_mvtec_loco
     global _CLASSNAMES_visa
     global _CLASSNAMES_btad
+    global _CLASSNAMES_mpdd
     global _CLASSNAMES_miniled
     global _CLASSNAMES_microled
 
@@ -65,11 +69,13 @@ def load_project_modules():
     import datasets.mvtec_loco as _mvtec_loco
     import datasets.visa as _visa
     import datasets.btad as _btad
+    import datasets.mpdd as _mpdd
     import datasets.miniled as _miniled
     import datasets.microled as _microled
     import models.backbone._backbones as __backbones
     import models.backbone.open_clip as _open_clip
     from datasets.btad import _CLASSNAMES as __CLASSNAMES_btad
+    from datasets.mpdd import _CLASSNAMES as __CLASSNAMES_mpdd
     from datasets.microled import _CLASSNAMES as __CLASSNAMES_microled
     from datasets.miniled import _CLASSNAMES as __CLASSNAMES_miniled
     from datasets.mvtec import _CLASSNAMES as __CLASSNAMES_mvtec_ad
@@ -90,14 +96,33 @@ def load_project_modules():
     mvtec_loco = _mvtec_loco
     visa = _visa
     btad = _btad
+    mpdd = _mpdd
     miniled = _miniled
     microled = _microled
     _CLASSNAMES_mvtec_ad = __CLASSNAMES_mvtec_ad
     _CLASSNAMES_mvtec_loco = __CLASSNAMES_mvtec_loco
     _CLASSNAMES_visa = __CLASSNAMES_visa
     _CLASSNAMES_btad = __CLASSNAMES_btad
+    _CLASSNAMES_mpdd = __CLASSNAMES_mpdd
     _CLASSNAMES_miniled = __CLASSNAMES_miniled
     _CLASSNAMES_microled = __CLASSNAMES_microled
+
+
+def normalize_dataset_name(dataset_name):
+    dataset_key = str(dataset_name).lower()
+    aliases = {
+        "mvtec": "mvtec_ad",
+        "mvtec_ad": "mvtec_ad",
+        "mvtec_loco": "mvtec_loco",
+        "visa": "visa",
+        "btad": "btad",
+        "mpdd": "mpdd",
+        "miniled": "miniled_ad",
+        "miniled_ad": "miniled_ad",
+        "microled": "microled_ad",
+        "microled_ad": "microled_ad",
+    }
+    return aliases.get(dataset_key, dataset_key)
 
 
 def load_msm_function(msm_cfg):
@@ -259,7 +284,7 @@ class MuScProfileRunner:
         print(f"Active device: {self.device}")
 
         self.path = cfg["datasets"]["data_path"]
-        self.dataset = cfg["datasets"]["dataset_name"]
+        self.dataset = normalize_dataset_name(cfg["datasets"]["dataset_name"])
         self.categories = cfg["datasets"]["class_name"]
         if isinstance(self.categories, str):
             if self.categories.lower() == "all":
@@ -271,6 +296,8 @@ class MuScProfileRunner:
                     self.categories = _CLASSNAMES_mvtec_loco
                 elif self.dataset == "btad":
                     self.categories = _CLASSNAMES_btad
+                elif self.dataset == "mpdd":
+                    self.categories = _CLASSNAMES_mpdd
                 elif self.dataset == "miniled_ad":
                     self.categories = _CLASSNAMES_miniled
                 elif self.dataset == "microled_ad":
@@ -333,6 +360,8 @@ class MuScProfileRunner:
             )
         if self.dataset == "btad":
             return btad.BTADDataset(split=btad.DatasetSplit.TEST, **common_args)
+        if self.dataset == "mpdd":
+            return mpdd.MPDDDataset(split=mpdd.DatasetSplit.TEST, **common_args)
         if self.dataset == "miniled_ad":
             return miniled.MiniledDataset(split=miniled.DatasetSplit.TEST, **common_args)
         if self.dataset == "microled_ad":
@@ -565,6 +594,8 @@ def profile_category(model, category, profiler, max_images=None):
                         is_target_category = (
                             model.dataset == "mvtec_ad"
                             and category in ["screw", "toothbrush", "zipper"]
+                        ) or (
+                            model.dataset in ["mpdd", "mvtec_loco"]
                         )
                         if not is_target_category:
                             current_use_spot_weight = False

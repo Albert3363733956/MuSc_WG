@@ -1,11 +1,15 @@
 import os
 import subprocess
 import sys
+import json
 
 # Configuration
 device = "0"
 # Path to datasets
 data_root_mvtec = r"C:\Users\Administrator\Desktop\dataset\MVTec"
+data_root_visa = r"C:\Users\Administrator\Desktop\dataset\visa"
+data_root_btad = r"C:\Users\Administrator\Desktop\dataset\BTech_Dataset_transformed"
+data_root_mvtec_loco = r"C:\Users\Administrator\Desktop\dataset\MVTec_loco"
 data_root_microled = r"C:\Users\Administrator\Desktop\dataset\LED\microled_AD"
 data_root_miniled = r"C:\Users\Administrator\Desktop\dataset\LED\miniled_AD"
 
@@ -16,8 +20,11 @@ output_dir = "../../output/RegAD"
 # Uncomment the configuration you want to run
 test_configs = [
     # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "all"},
-    {"dataset": "microled", "path": data_root_miniled, "class_name": "all"},
-    {"dataset": "miniled", "path": data_root_miniled, "class_name": "all"},
+    {"dataset": "visa", "path": data_root_visa, "class_name": "all"},
+    # {"dataset": "btad", "path": data_root_btad, "class_name": "all"},
+    # {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all"},
+    # {"dataset": "microled", "path": data_root_microled, "class_name": "all"},
+    # {"dataset": "miniled", "path": data_root_miniled, "class_name": "all"},
 ]
 
 few_shots = [4]  # Define the number of few-shots to evaluate
@@ -43,7 +50,12 @@ for config in test_configs:
 
     # Resolve target classes
     if target_class.lower() == "all":
-        classes = [d for d in os.listdir(data_root) if os.path.isdir(os.path.join(data_root, d))]
+        meta_path = os.path.join(data_root, "meta.json")
+        if os.path.isfile(meta_path):
+            with open(meta_path, "r") as f:
+                classes = sorted(json.load(f)["test"].keys())
+        else:
+            classes = [d for d in os.listdir(data_root) if os.path.isdir(os.path.join(data_root, d))]
     else:
         classes = [target_class]
 
@@ -85,7 +97,7 @@ for config in test_configs:
                 train_cmd = [
                     sys.executable, "train.py",
                     "--obj", c,
-                    "--data_type", "mvtec", # Hardcoded to mvtec to use our adapted dataset loader
+                    "--data_type", test_dataset,
                     "--data_path", data_root,
                     "--shot", str(few_shot),
                     "--epochs", str(epochs),
@@ -115,7 +127,7 @@ for config in test_configs:
             test_cmd = [
                 sys.executable, "test.py",
                 "--obj", c,
-                "--data_type", "mvtec",
+                "--data_type", test_dataset,
                 "--data_path", data_root,
                 "--shot", str(few_shot),
                 "--inferences", str(inferences),

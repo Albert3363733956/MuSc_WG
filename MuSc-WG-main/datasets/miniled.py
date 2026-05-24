@@ -7,8 +7,8 @@ import random
 
 
 
-_CLASSNAMES = ["miniled_TypeA_1", "miniled_TypeA_2","miniled_TypeA_3", "miniled_TypeB_1", "miniled_TypeB_2","miniled_TypeB_3"]
-
+_CLASSNAMES = ["miniled_TypeA", "miniled_TypeB"]
+# _CLASSNAMES = ["miniled_TypeA_1", "miniled_TypeA_2","miniled_TypeA_3", "miniled_TypeB_1", "miniled_TypeB_2","miniled_TypeB_3"]
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
 
@@ -81,7 +81,8 @@ class MiniledDataset(torch.utils.data.Dataset):
 
         id_dict = {}
         for i in range(len(full_datasets)):
-            anomaly_type = full_datasets[i][2].split('/')[-2]
+            image_path = os.path.normpath(full_datasets[i][2])
+            anomaly_type = os.path.basename(os.path.dirname(image_path))
             if anomaly_type not in id_dict.keys():
                 id_dict[anomaly_type] = []
             id_dict[anomaly_type].append(i)
