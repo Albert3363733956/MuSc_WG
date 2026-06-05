@@ -6,6 +6,7 @@ import sys
 device = "0"
 # Path to MVTec dataset
 data_root_mvtec = r"C:\Users\Administrator\Desktop\dataset\MVTec"
+data_root_mvtec_loco = r"C:\Users\Administrator\Desktop\dataset\MVTec_loco"
 data_root_microled = r"C:\Users\Administrator\Desktop\dataset\LED\microled_AD"
 data_root_miniled = r"C:\Users\Administrator\Desktop\dataset\LED\miniled_AD"
 
@@ -20,7 +21,8 @@ shots = [0]
 
 # Define test configurations
 test_configs = [
-    {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "transistor", "train_dataset": "visa"}, # Example
+    {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all", "train_dataset": "visa"}, # Test all MVTec LOCO classes
+    # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "transistor", "train_dataset": "visa"}, # Example
     # {"dataset": "microled", "path": data_root_microled, "class_name": "all", "train_dataset": "visa"}, # Test all classes in microled
     # {"dataset": "miniled", "path": data_root_miniled, "class_name": "all", "train_dataset": "visa"},   # Test all classes in miniled
 ]
@@ -77,6 +79,7 @@ for config in test_configs:
                 "--textual_learner",
                 "--pq_learner",
                 "--pq_context",
+                "--eval_metrics", "I-AUROC", "I-AP", "I-F1max", "P-AUROC", "P-AP", "P-F1max",
                 "--visulize_bool",
                 "--class_name", target_class
             ]

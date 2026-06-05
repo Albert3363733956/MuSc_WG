@@ -34,6 +34,7 @@ btad = None
 mpdd = None
 miniled = None
 microled = None
+hhled = None
 _CLASSNAMES_mvtec_ad = None
 _CLASSNAMES_mvtec_loco = None
 _CLASSNAMES_visa = None
@@ -41,6 +42,7 @@ _CLASSNAMES_btad = None
 _CLASSNAMES_mpdd = None
 _CLASSNAMES_miniled = None
 _CLASSNAMES_microled = None
+_CLASSNAMES_hhled = None
 
 
 def load_project_modules():
@@ -57,6 +59,7 @@ def load_project_modules():
     global mpdd
     global miniled
     global microled
+    global hhled
     global _CLASSNAMES_mvtec_ad
     global _CLASSNAMES_mvtec_loco
     global _CLASSNAMES_visa
@@ -64,6 +67,7 @@ def load_project_modules():
     global _CLASSNAMES_mpdd
     global _CLASSNAMES_miniled
     global _CLASSNAMES_microled
+    global _CLASSNAMES_hhled
 
     import datasets.mvtec as _mvtec
     import datasets.mvtec_loco as _mvtec_loco
@@ -72,9 +76,11 @@ def load_project_modules():
     import datasets.mpdd as _mpdd
     import datasets.miniled as _miniled
     import datasets.microled as _microled
+    import datasets.hhled as _hhled
     import models.backbone._backbones as __backbones
     import models.backbone.open_clip as _open_clip
     from datasets.btad import _CLASSNAMES as __CLASSNAMES_btad
+    from datasets.hhled import _CLASSNAMES as __CLASSNAMES_hhled
     from datasets.mpdd import _CLASSNAMES as __CLASSNAMES_mpdd
     from datasets.microled import _CLASSNAMES as __CLASSNAMES_microled
     from datasets.miniled import _CLASSNAMES as __CLASSNAMES_miniled
@@ -99,6 +105,7 @@ def load_project_modules():
     mpdd = _mpdd
     miniled = _miniled
     microled = _microled
+    hhled = _hhled
     _CLASSNAMES_mvtec_ad = __CLASSNAMES_mvtec_ad
     _CLASSNAMES_mvtec_loco = __CLASSNAMES_mvtec_loco
     _CLASSNAMES_visa = __CLASSNAMES_visa
@@ -106,6 +113,7 @@ def load_project_modules():
     _CLASSNAMES_mpdd = __CLASSNAMES_mpdd
     _CLASSNAMES_miniled = __CLASSNAMES_miniled
     _CLASSNAMES_microled = __CLASSNAMES_microled
+    _CLASSNAMES_hhled = __CLASSNAMES_hhled
 
 
 def normalize_dataset_name(dataset_name):
@@ -121,6 +129,8 @@ def normalize_dataset_name(dataset_name):
         "miniled_ad": "miniled_ad",
         "microled": "microled_ad",
         "microled_ad": "microled_ad",
+        "hhled": "hhled_ad",
+        "hhled_ad": "hhled_ad",
     }
     return aliases.get(dataset_key, dataset_key)
 
@@ -302,6 +312,8 @@ class MuScProfileRunner:
                     self.categories = _CLASSNAMES_miniled
                 elif self.dataset == "microled_ad":
                     self.categories = _CLASSNAMES_microled
+                elif self.dataset == "hhled_ad":
+                    self.categories = _CLASSNAMES_hhled
             else:
                 self.categories = [self.categories]
 
@@ -366,6 +378,8 @@ class MuScProfileRunner:
             return miniled.MiniledDataset(split=miniled.DatasetSplit.TEST, **common_args)
         if self.dataset == "microled_ad":
             return microled.MicroledDataset(split=microled.DatasetSplit.TEST, **common_args)
+        if self.dataset == "hhled_ad":
+            return hhled.HhledDataset(split=hhled.DatasetSplit.TEST, **common_args)
         raise ValueError(f"Unsupported dataset_name: {self.dataset}")
 
 

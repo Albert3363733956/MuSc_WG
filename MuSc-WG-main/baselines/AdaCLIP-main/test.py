@@ -84,7 +84,8 @@ def train(args):
             transform=model.preprocess,
             target_transform=model.transform,
             training=False,
-            obj_name=args.obj_name)
+            obj_name=args.obj_name,
+            data_root=args.data_root)
 
         test_dataloader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False)
         save_fig_flag = save_fig
@@ -173,6 +174,8 @@ if __name__ == '__main__':
     # for the dataset model
     parser.add_argument("--testing_data", type=str, default="visa", help="Dataset for testing (default: 'visa')")
     parser.add_argument("--obj_name", type=str, default="all", help="Specific category to test (default: 'all')")
+    parser.add_argument("--data_root", type=str, default=None,
+                        help="Optional dataset root. If omitted, the root from dataset/*.py is used.")
 
     # for the image model
     parser.add_argument("--image_path", type=str, default="asset/img.png",

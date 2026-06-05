@@ -20,6 +20,8 @@ import datasets.miniled as miniled
 from datasets.miniled import _CLASSNAMES as _CLASSNAMES_miniled
 import datasets.microled as microled
 from datasets.microled import _CLASSNAMES as _CLASSNAMES_microled
+import datasets.hhled as hhled
+from datasets.hhled import _CLASSNAMES as _CLASSNAMES_hhled
 
 import models.backbone.open_clip as open_clip
 import models.backbone._backbones as _backbones
@@ -55,6 +57,8 @@ def normalize_dataset_name(dataset_name):
         'miniled_ad': 'miniled_ad',
         'microled': 'microled_ad',
         'microled_ad': 'microled_ad',
+        'hhled': 'hhled_ad',
+        'hhled_ad': 'hhled_ad',
     }
     return aliases.get(dataset_key, dataset_key)
 
@@ -112,6 +116,8 @@ class MuSc():
                     self.categories = _CLASSNAMES_miniled
                 elif self.dataset == 'microled_ad':
                     self.categories = _CLASSNAMES_microled
+                elif self.dataset == 'hhled_ad':
+                    self.categories = _CLASSNAMES_hhled
             else:
                 self.categories = [self.categories]
 
@@ -169,6 +175,10 @@ class MuSc():
                                                 divide_num=divide_num, divide_iter=divide_iter, random_seed=self.seed)
         elif self.dataset == 'microled_ad':
             test_dataset = microled.MicroledDataset(source=self.path, split=microled.DatasetSplit.TEST,
+                                            classname=category, resize=self.image_size, imagesize=self.image_size, clip_transformer=self.preprocess,
+                                                divide_num=divide_num, divide_iter=divide_iter, random_seed=self.seed)
+        elif self.dataset == 'hhled_ad':
+            test_dataset = hhled.HhledDataset(source=self.path, split=hhled.DatasetSplit.TEST,
                                             classname=category, resize=self.image_size, imagesize=self.image_size, clip_transformer=self.preprocess,
                                                 divide_num=divide_num, divide_iter=divide_iter, random_seed=self.seed)
         else:
@@ -368,9 +378,9 @@ class MuSc():
                 ablation_detail_start = 1       # 1: Skip Level 0 (Noise)
                 ablation_keep_ll = True         # True: Include Low Frequency Approximation
 
-                ablation_gamma   =1.5          # Moderate Gamma
+                ablation_gamma  =  2.5         # Moderate Gamma
                 ablation_use_spot_weight = True  # Suppress patterns found in ANY other image (Occasional Normal Pattern)
-                ablation_use_morphology = False  # Toggle for Morphological Optimization (Opening/Closing + Smoothing)
+                ablation_use_morphology = True  # Toggle for Morphological Optimization (Opening/Closing + Smoothing)
                 
                 # Morphological Parameters
                 ablation_morph_open_k = 1       # Opening kernel size (remove noise). 1 = disabled.

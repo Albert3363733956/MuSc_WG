@@ -37,7 +37,7 @@ dataset_dict = {
     'mvtec_loco': (MVTEC_LOCO_CLS_NAMES, MVTecLOCODataset, MVTEC_LOCO_ROOT),
 }
 
-def get_data(dataset_type_list, transform, target_transform, training, obj_name='all'):
+def get_data(dataset_type_list, transform, target_transform, training, obj_name='all', data_root=None):
     if not isinstance(dataset_type_list, list):
         dataset_type_list = [dataset_type_list]
 
@@ -47,12 +47,20 @@ def get_data(dataset_type_list, transform, target_transform, training, obj_name=
     for dataset_type in dataset_type_list:
         if dataset_dict.get(dataset_type, ''):
             dataset_cls_names, dataset_instance, dataset_root = dataset_dict[dataset_type]
+            if data_root is not None:
+                if isinstance(data_root, dict):
+                    dataset_root = data_root.get(dataset_type, dataset_root)
+                elif len(dataset_type_list) == 1:
+                    dataset_root = data_root
+                else:
+                    raise ValueError("data_root must be a dict when testing multiple datasets.")
             if obj_name.lower() != 'all':
                 dataset_cls_names = [obj_name]
             dataset_instance = dataset_instance(
                 clsnames=dataset_cls_names,
                 transform=transform,
                 target_transform=target_transform,
+                root=dataset_root,
                 training=training
             )
 

@@ -15,10 +15,10 @@ data_root_miniled = r"C:\Users\Administrator\Desktop\dataset\LED\miniled_AD"
 # Uncomment the configuration you want to run
 test_configs = [
     # {"dataset": "mvtec", "path": data_root_mvtec, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
-    # {"dataset": "btad", "path": data_root_btad, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
-    # {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
-    {"dataset": "microled", "path": data_root_microled, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
-    {"dataset": "miniled", "path": data_root_miniled, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
+    {"dataset": "btad", "path": data_root_btad, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
+    {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
+    # {"dataset": "microled", "path": data_root_microled, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
+    # {"dataset": "miniled", "path": data_root_miniled, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
 ]
 
 few_shots = [4]  # Define the number of few-shots to evaluate

@@ -1,5 +1,4 @@
 import torch.backends.cudnn as cudnn
-from torch.utils.tensorboard import SummaryWriter
 import os
 import random
 import torch
@@ -17,6 +16,8 @@ def setup_seed(seed):
 
 
 def setup_paths(args):
+    from torch.utils.tensorboard import SummaryWriter
+
     save_root = args.save_path
     model_root = os.path.join(save_root, 'models')
     log_root = os.path.join(save_root, 'logs')

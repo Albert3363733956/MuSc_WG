@@ -35,10 +35,11 @@ def test(args):
     save_path = args.save_path
     dataset_name = args.dataset
     k = args.k
-    if dataset_name == 'mvtec':
+    dataset_key = dataset_name.lower()
+    if dataset_key in ('mvtec', 'mvtec_loco'):
         seg_classi = 'mvtec'
         cache_name = 'visa'
-    elif dataset_name == 'visa':
+    elif dataset_key == 'visa':
         cache_name = 'mvtec'
         seg_classi = 'visa'
     else:

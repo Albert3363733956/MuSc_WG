@@ -1,6 +1,6 @@
 import hashlib
 import os
-import urllib
+import urllib.request
 import warnings
 from typing import Union, List
 from pkg_resources import packaging
@@ -29,14 +29,21 @@ _MODELS = {
 }
 
 
+def _sha256sum(path: str) -> str:
+    digest = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def _download(
         url: str,
         cache_dir: Union[str, None] = None,
 ):
 
     if not cache_dir:
-        # cache_dir = os.path.expanduser("~/.cache/clip")
-        cache_dir = os.path.expanduser("/root/data/xcr3/projects/AnomalyCLIP-main/checkpoint")
+        cache_dir = os.path.expanduser("~/.cache/clip")
     os.makedirs(cache_dir, exist_ok=True)
     filename = os.path.basename(url)
 
@@ -47,22 +54,46 @@ def _download(
     else:
         expected_sha256 = ''
 
+    project_checkpoint_dir = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), os.pardir, "checkpoints")
+    )
+    candidate_dirs = [
+        cache_dir,
+        project_checkpoint_dir,
+        os.path.expanduser("~/.cache/clip"),
+        os.path.expanduser("/root/data/xcr3/projects/AnomalyCLIP-main/checkpoint"),
+    ]
+    seen_dirs = set()
+    candidate_dirs = [
+        path for path in candidate_dirs
+        if not (path in seen_dirs or seen_dirs.add(path))
+    ]
+
+    for candidate_dir in candidate_dirs:
+        candidate_path = os.path.join(candidate_dir, filename)
+        if os.path.isfile(candidate_path):
+            if not expected_sha256:
+                return candidate_path
+            actual_sha256 = _sha256sum(candidate_path)
+            if actual_sha256.startswith(expected_sha256):
+                return candidate_path
+            warnings.warn(
+                f"{candidate_path} exists, but the SHA256 checksum does not match; "
+                "ignoring this incomplete or corrupted file"
+            )
+
     download_target = os.path.join(cache_dir, filename)
+    temp_download_target = download_target + ".tmp"
 
     if os.path.exists(download_target) and not os.path.isfile(download_target):
         raise RuntimeError(f"{download_target} exists and is not a regular file")
 
-    if os.path.isfile(download_target):
-        if expected_sha256:
-            if hashlib.sha256(open(download_target, "rb").read()).hexdigest().startswith(expected_sha256):
-                return download_target
-            else:
-                warnings.warn(f"{download_target} exists, but the SHA256 checksum does not match; re-downloading the file")
-        else:
-            return download_target
+    if os.path.exists(temp_download_target):
+        os.remove(temp_download_target)
 
-    with urllib.request.urlopen(url) as source, open(download_target, "wb") as output:
-        with tqdm(total=int(source.headers.get("Content-Length")), ncols=80, unit='iB', unit_scale=True) as loop:
+    with urllib.request.urlopen(url) as source, open(temp_download_target, "wb") as output:
+        total_size = int(source.headers.get("Content-Length") or 0)
+        with tqdm(total=total_size, ncols=80, unit='iB', unit_scale=True) as loop:
             while True:
                 buffer = source.read(8192)
                 if not buffer:
@@ -71,8 +102,16 @@ def _download(
                 output.write(buffer)
                 loop.update(len(buffer))
 
-    if expected_sha256 and not hashlib.sha256(open(download_target, "rb").read()).hexdigest().startswith(expected_sha256):
-        raise RuntimeError(f"Model has been downloaded but the SHA256 checksum does not not match")
+    if expected_sha256:
+        actual_sha256 = _sha256sum(temp_download_target)
+        if not actual_sha256.startswith(expected_sha256):
+            os.remove(temp_download_target)
+            raise RuntimeError(
+                "Model has been downloaded but the SHA256 checksum does not match. "
+                f"Expected prefix {expected_sha256}, got {actual_sha256}."
+            )
+
+    os.replace(temp_download_target, download_target)
 
     return download_target
 
@@ -142,8 +181,7 @@ def load(name: str, device: Union[str, torch.device] = "cuda" if torch.cuda.is_a
     """
     print("name", name)
     if name in _MODELS:
-        # model_path = _download(_MODELS[name], download_root or os.path.expanduser("~/.cache/clip"))
-        model_path = _download(_MODELS[name], download_root or os.path.expanduser("/root/data/xcr3/projects/AnomalyCLIP-main/checkpoint"))
+        model_path = _download(_MODELS[name], download_root)
     elif os.path.isfile(name):
         model_path = name
     else:

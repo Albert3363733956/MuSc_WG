@@ -1,23 +1,23 @@
 datasets:
-  dataset_name: 'visa'  # choice ['mvtec_ad', 'mvtec_loco', 'visa', 'btad', 'mpdd', 'miniled_ad', 'microled_ad']
-  data_path: C:\Users\Administrator\Desktop\dataset\visa # e.g. ./data/mvtec_anomaly_detection/ or C:\Users\Administrator\Desktop\dataset\MVTec_loco
-  class_name:  'all' # 'ALL' 'transistor' 'breakfast_box' 'bracket_black' 'miniled_TypeA_1' 'microled_TypeA_1'
+  dataset_name: 'hhled_ad'  # choice ['mvtec_ad', 'mvtec_loco', 'visa', 'btad', 'mpdd', 'miniled_ad', 'microled_ad',hhled_ad']
+  data_path: C:\Users\Administrator\Desktop\dataset\LED2\hhled_AD  # e.g. ./data/mvtec_anomaly_detection/ or C:\Users\Administrator\Desktop\dataset\MVTec_loco
+  class_name:  'all'  # 'ALL' 'transistor' 'breakfast_box' 'bracket_black' 'miniled_TypeA_1' 'microled_TypeA_1'
   img_resize: 518  # 512 is for Patch 16 (32*16), for Patch 14 use 518 (37*14)
   divide_num: 1
 models:
   backbone_name: 'ViT-L-14-336'
   pretrained: 'openai'
   batch_size: 4
-  feature_layers: [2, 5, 8, 11]
+  feature_layers: [5, 11, 17, 23]  #如果backbone换成vit则要将层数改为[5, 11, 17, 23]如果是dinov2_vits14则改为[2, 5, 8, 11]
   r_list: [1, 3, 5]
 msm:
   module: 'original'  # choice ['original', 'optimized']; optimized uses models/modules/MSM2.0.py
   
 device: 0
 testing:
-  output_dir: 'output'
+  output_dir: 'output_clip'
 
-  desktop_results_dir: C:\Users\Administrator\Desktop\公共数据集\visa\gammm=1.5
+  desktop_results_dir: C:\Users\Administrator\Desktop\效率分析\ViT-L-14-336\hhled\s=1 # 修改这里控制复制到桌面的MuSc结果表文件夹路径
   desktop_results_filename: 'results.xlsx' # 修改这里控制复制到桌面的MuSc结果表文件名
   module_profile_filename: 'musc_module_profile.xlsx' # 修改这里控制复制到桌面的模块分析表文件名
   

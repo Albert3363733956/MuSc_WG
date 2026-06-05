@@ -16,9 +16,9 @@ data_root_miniled = "../../data/miniled_AD"
 test_configs = [
     # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "all"}, 
     # {"dataset": "btad", "path": data_root_btad, "class_name": "all"},
-    # {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all"},
-    {"dataset": "microled", "path": data_root_microled, "class_name": "all"}, 
-    {"dataset": "miniled", "path": data_root_miniled, "class_name": "all"},   
+    {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all"},
+    # {"dataset": "microled", "path": data_root_microled, "class_name": "all"},
+    # {"dataset": "miniled", "path": data_root_miniled, "class_name": "all"},
 ]
 
 few_shot = 0

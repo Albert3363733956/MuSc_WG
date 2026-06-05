@@ -6,6 +6,7 @@ import sys
 device = "0"
 # Path to datasets
 data_root_mvtec = r"C:\Users\Administrator\Desktop\dataset\MVTec"
+data_root_mvtec_loco = r"C:\Users\Administrator\Desktop\dataset\MVTec_loco"
 data_root_microled = r"C:\Users\Administrator\Desktop\dataset\LED\microled_AD"
 data_root_miniled = r"C:\Users\Administrator\Desktop\dataset\LED\miniled_AD"
 
@@ -13,9 +14,10 @@ data_root_miniled = r"C:\Users\Administrator\Desktop\dataset\LED\miniled_AD"
 # Uncomment the configuration you want to run
 test_configs = [
     # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "transistor", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"}, 
-    {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"},
-    {"dataset": "microled", "path": data_root_microled, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"}, 
-    {"dataset": "miniled", "path": data_root_miniled, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"},   
+    # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"},
+    {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"},
+    # {"dataset": "microled", "path": data_root_microled, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"},
+    # {"dataset": "miniled", "path": data_root_miniled, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"},
 ]
 
 for config in test_configs:
