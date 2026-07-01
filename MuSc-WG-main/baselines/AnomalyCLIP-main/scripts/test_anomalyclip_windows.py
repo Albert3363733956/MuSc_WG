@@ -4,27 +4,38 @@ import sys
 
 # Configuration
 device = "0"
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+
+
+def resolve_from_project(path):
+    if os.path.isabs(path):
+        return path
+    return os.path.normpath(os.path.join(project_root, path))
+
+
 # Path to datasets
 data_root_mvtec = r"C:\Users\Administrator\Desktop\dataset\MVTec"
 data_root_mvtec_loco = r"C:\Users\Administrator\Desktop\dataset\MVTec_loco"
-data_root_microled = r"C:\Users\Administrator\Desktop\dataset\LED\microled_AD"
-data_root_miniled = r"C:\Users\Administrator\Desktop\dataset\LED\miniled_AD"
+data_root_microled = r"C:\Users\Administrator\Desktop\dataset\LED2\microled_AD"
+data_root_miniled = r"C:\Users\Administrator\Desktop\dataset\LED2\miniled_AD"
+data_root_hhled = r"C:\Users\Administrator\Desktop\dataset\LED2\hhled_AD"
 
 # Define test configurations
 # Uncomment the configuration you want to run
 test_configs = [
     # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "transistor", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"}, 
-    # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"},
-    {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"},
+    {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"},
+    # {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"},
     # {"dataset": "microled", "path": data_root_microled, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"},
     # {"dataset": "miniled", "path": data_root_miniled, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"},
+    # {"dataset": "hhled", "path": data_root_hhled, "class_name": "all", "checkpoint": "./checkpoints/9_12_4_multiscale/epoch_15.pth"},
 ]
 
 for config in test_configs:
     test_dataset = config["dataset"]
-    data_root = config["path"]
+    data_root = resolve_from_project(config["path"])
     target_class = config["class_name"]
-    checkpoint_path = config["checkpoint"]
+    checkpoint_path = resolve_from_project(config["checkpoint"])
 
     # Check if data root exists
     if not os.path.exists(data_root):
@@ -33,9 +44,9 @@ for config in test_configs:
 
     # Paths
     if target_class.lower() == "all":
-        save_dir = f"../../output/AnomalyCLIP/{test_dataset}/zero_shot_all"
+        save_dir = resolve_from_project(f"../../output/AnomalyCLIP/{test_dataset}/zero_shot_all")
     else:
-        save_dir = f"../../output/AnomalyCLIP/{test_dataset}/zero_shot_{target_class}"
+        save_dir = resolve_from_project(f"../../output/AnomalyCLIP/{test_dataset}/zero_shot_{target_class}")
     
     # Ensure save directory exists
     os.makedirs(save_dir, exist_ok=True)
@@ -63,6 +74,6 @@ for config in test_configs:
     print(f"Running test for dataset={test_dataset}, class={target_class}...")
     
     try:
-        subprocess.run(cmd, env=env, check=True)
+        subprocess.run(cmd, env=env, cwd=project_root, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error running command: {e}")

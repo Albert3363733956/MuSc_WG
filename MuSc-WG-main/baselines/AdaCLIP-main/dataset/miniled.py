@@ -5,7 +5,7 @@ from config import DATA_ROOT
 MINILED_CLS_NAMES = [
     'miniled_TypeA_1', 'miniled_TypeA_2', 'miniled_TypeB_1', 'miniled_TypeB_2',
 ]
-MINILED_ROOT = r'C:\Users\Administrator\Desktop\dataset\LED\miniled_AD'
+MINILED_ROOT = os.environ.get('ADACLIP_MINILED_ROOT', os.path.join(DATA_ROOT, 'miniled_AD'))
 
 class MiniLEDDataset(BaseDataset):
     def __init__(self, transform, target_transform, clsnames=MINILED_CLS_NAMES, aug_rate=0.2, root=MINILED_ROOT, training=True):

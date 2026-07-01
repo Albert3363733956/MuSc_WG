@@ -44,6 +44,28 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
+def cv2_read_image(path, flags=cv2.IMREAD_COLOR):
+    try:
+        with open(path, 'rb') as f:
+            data = np.frombuffer(f.read(), dtype=np.uint8)
+    except OSError:
+        return None
+    if data.size == 0:
+        return None
+    return cv2.imdecode(data, flags)
+
+
+def cv2_write_image(path, image):
+    ext = os.path.splitext(path)[1] or '.png'
+    ok, encoded = cv2.imencode(ext, image)
+    if not ok:
+        raise IOError(f"Failed to encode visualization image: {path}")
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'wb') as f:
+        f.write(encoded.tobytes())
+
+
 def normalize_dataset_name(dataset_name):
     dataset_key = str(dataset_name).lower()
     aliases = {
@@ -221,8 +243,9 @@ class MuSc():
             os.makedirs(save_dir, exist_ok=True)
             
             # Read original image
-            ori_img = cv2.imread(path)
+            ori_img = cv2_read_image(path)
             if ori_img is None:
+                print(f"Warning: failed to read image for visualization: {path}")
                 continue
             ori_img = cv2.cvtColor(ori_img, cv2.COLOR_BGR2RGB)
             ori_img = cv2.resize(ori_img, (self.image_size, self.image_size))
@@ -232,7 +255,7 @@ class MuSc():
             gt_mask = cv2.resize(gt_mask.astype(np.float32), (self.image_size, self.image_size), interpolation=cv2.INTER_NEAREST)
             gt_vis = draw_mask_contour(ori_img, gt_mask)
             save_gt = os.path.join(save_dir, f"{base_name}_gt.png")
-            cv2.imwrite(save_gt, cv2.cvtColor(gt_vis, cv2.COLOR_RGB2BGR))
+            cv2_write_image(save_gt, cv2.cvtColor(gt_vis, cv2.COLOR_RGB2BGR))
             
             # Anomaly map
             anomaly_map = pr_px[i].squeeze()
@@ -242,7 +265,7 @@ class MuSc():
             anomaly_map = cv2.resize(anomaly_map, (self.image_size, self.image_size))
             vis = apply_ad_scoremap(ori_img, anomaly_map)
             save_vis = os.path.join(save_dir, f"{base_name}.png")
-            cv2.imwrite(save_vis, cv2.cvtColor(vis, cv2.COLOR_RGB2BGR))
+            cv2_write_image(save_vis, cv2.cvtColor(vis, cv2.COLOR_RGB2BGR))
 
 
     def visualize_tsne(self, features, labels, category, title="t-SNE Visualization"):
@@ -256,7 +279,20 @@ class MuSc():
             title (str): Title of the plot.
         """
         print(f"Performing t-SNE on {features.shape[0]} samples with dimension {features.shape[1]}...")
-        tsne = TSNE(n_components=2, perplexity=self.tsne_perplexity, n_iter=self.tsne_n_iter, random_state=self.seed)
+        try:
+            tsne = TSNE(
+                n_components=2,
+                perplexity=self.tsne_perplexity,
+                max_iter=self.tsne_n_iter,
+                random_state=self.seed,
+            )
+        except TypeError:
+            tsne = TSNE(
+                n_components=2,
+                perplexity=self.tsne_perplexity,
+                n_iter=self.tsne_n_iter,
+                random_state=self.seed,
+            )
         features_2d = tsne.fit_transform(features)
         
         plt.figure(figsize=(10, 8))
@@ -378,13 +414,13 @@ class MuSc():
                 ablation_detail_start = 1       # 1: Skip Level 0 (Noise)
                 ablation_keep_ll = True         # True: Include Low Frequency Approximation
 
-                ablation_gamma  =  2.5         # Moderate Gamma
-                ablation_use_spot_weight = True  # Suppress patterns found in ANY other image (Occasional Normal Pattern)
+                ablation_gamma  =  3        # Moderate Gamma
+                ablation_use_spot_weight = False  # Suppress patterns found in ANY other image (Occasional Normal Pattern)
                 ablation_use_morphology = True  # Toggle for Morphological Optimization (Opening/Closing + Smoothing)
                 
                 # Morphological Parameters
                 ablation_morph_open_k = 1       # Opening kernel size (remove noise). 1 = disabled.
-                ablation_morph_close_k = 5      # Closing kernel size (fill gaps). 3 is gentle.
+                ablation_morph_close_k = 3      # Closing kernel size (fill gaps). 3 is gentle.
                 ablation_morph_smooth_k = 3     # Gaussian smoothing kernel size (remove blockiness).
                 ablation_morph_sigma = 0.3      # Gaussian blur standard deviation.
                 

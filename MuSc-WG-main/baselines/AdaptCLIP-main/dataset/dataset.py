@@ -62,6 +62,8 @@ def generate_class_info(dataset_name):
         obj_list = [
             'miniled_TypeA_1', 'miniled_TypeA_2', 'miniled_TypeB_1', 'miniled_TypeB_2',
         ]
+    elif dataset_name in ['hhled', 'hhled_ad']:
+        obj_list = ['led_6core', 'led_8core']
     elif dataset_name == 'RealIAD':
         obj_list = ["audiojack", "bottle_cap", "button_battery", "end_cap", "eraser", "fire_hood", "mint", "mounts", "pcb", "phone_battery",  \
                     "plastic_nut", "plastic_plug", "porcelain_doll", "regulator", "rolled_strip_base", "sim_card_set", "switch", "tape", "terminalblock",  \

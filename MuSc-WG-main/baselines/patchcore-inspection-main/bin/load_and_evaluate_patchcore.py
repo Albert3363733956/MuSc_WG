@@ -21,6 +21,9 @@ _DATASETS = {
     "visa": ["patchcore.datasets.visa", "VisaDataset"],
     "btad": ["patchcore.datasets.btad", "BTADDataset"],
     "mvtec_loco": ["patchcore.datasets.mvtec_loco", "MVTecLOCODataset"],
+    "microled": ["patchcore.datasets.mvtec", "MVTecDataset"],
+    "miniled": ["patchcore.datasets.mvtec", "MVTecDataset"],
+    "hhled": ["patchcore.datasets.mvtec", "MVTecDataset"],
 }
 
 

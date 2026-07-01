@@ -9,7 +9,7 @@ MICROLED_CLS_NAMES = [
     'microled_TypeA_13', 'microled_TypeA_14', 'microled_TypeA_15', 'microled_TypeA_16',
     'microled_TypeA_17', 'microled_TypeA_18', 'microled_TypeA_19', 'microled_TypeA_20'
 ]
-MICROLED_ROOT = r'C:\Users\Administrator\Desktop\dataset\LED\microled_AD'
+MICROLED_ROOT = os.environ.get('ADACLIP_MICROLED_ROOT', os.path.join(DATA_ROOT, 'microled_AD'))
 
 class MicroLEDDataset(BaseDataset):
     def __init__(self, transform, target_transform, clsnames=MICROLED_CLS_NAMES, aug_rate=0.2, root=MICROLED_ROOT, training=True):

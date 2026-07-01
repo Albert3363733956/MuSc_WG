@@ -220,7 +220,7 @@ def str2bool(v):
 
 def get_args():
     parser = argparse.ArgumentParser(description='Anomaly detection')
-    parser.add_argument('--dataset', type=str, default='mvtec', choices=['mvtec', 'visa', 'microled', 'miniled', 'btad', 'mvtec_loco'])
+    parser.add_argument('--dataset', type=str, default='mvtec', choices=['mvtec', 'visa', 'microled', 'miniled', 'hhled', 'hhled_ad', 'btad', 'mvtec_loco'])
     parser.add_argument('--data_path', type=str, default=None, help='path to dataset')
     parser.add_argument('--class_name', type=str, default='carpet')
 

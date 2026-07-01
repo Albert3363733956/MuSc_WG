@@ -3,6 +3,7 @@ import os
 import torchvision.transforms as transforms
 from scipy.ndimage import gaussian_filter
 
+from image_io import read_image_cv2
 from loss import FocalLoss, BinaryDiceLoss
 from tools import visualization, calculate_metric, calculate_average_metric
 from .adaclip import *
@@ -169,7 +170,7 @@ class AdaCLIP_Trainer(nn.Module):
                 if save_fig:
                     path = items['img_path']
                     for _path in path:
-                        vis_image = cv2.resize(cv2.imread(_path), (self.image_size, self.image_size))
+                        vis_image = cv2.resize(read_image_cv2(_path), (self.image_size, self.image_size))
                         results['imgs'].append(vis_image)
                     cls_name = items['cls_name']
                     for _cls_name, _path in zip(cls_name, path):

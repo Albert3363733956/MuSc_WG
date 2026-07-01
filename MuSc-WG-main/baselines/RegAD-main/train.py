@@ -24,6 +24,7 @@ import warnings
 warnings.filterwarnings("ignore")
 use_cuda = torch.cuda.is_available()
 device = torch.device('cuda' if use_cuda else 'cpu')
+DEFAULT_NUM_WORKERS = 0 if os.name == 'nt' else 4
 
 
 def get_dataset_classes(data_type):
@@ -88,7 +89,7 @@ def main():
     init_lrs = [args.lr, args.lr, args.lr]
 
     print('Loading Datasets')
-    kwargs = {'num_workers': 4, 'pin_memory': True} if use_cuda else {}
+    kwargs = {'num_workers': DEFAULT_NUM_WORKERS, 'pin_memory': True} if use_cuda else {}
     Dataset_train, Dataset_test = get_dataset_classes(args.data_type)
     train_dataset = Dataset_train(args.data_path, class_name=args.obj, is_train=True, resize=args.img_size, shot=args.shot, batch=args.batch_size)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=1, shuffle=True, **kwargs)

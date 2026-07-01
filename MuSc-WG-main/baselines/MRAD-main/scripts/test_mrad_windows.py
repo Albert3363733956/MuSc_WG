@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+import importlib.util
 from pathlib import Path
 
 # Configuration
@@ -8,23 +9,48 @@ device = "0"
 project_root = Path(__file__).resolve().parents[1]
 output_root = project_root.parents[1] / "output" / "MRAD"
 
+
+def ensure_meta_file(dataset_name, data_root):
+    meta_path = data_root / "meta.json"
+    if meta_path.exists():
+        return True
+
+    preprocessors = {
+        "hhled": (project_root / "generate_dataset_json" / "hhled.py", "HHLEDSolver"),
+        "hhled_ad": (project_root / "generate_dataset_json" / "hhled.py", "HHLEDSolver"),
+    }
+    if dataset_name not in preprocessors:
+        print(f"Error: meta.json not found at {meta_path.resolve()} for dataset {dataset_name}")
+        return False
+
+    module_path, class_name = preprocessors[dataset_name]
+    spec = importlib.util.spec_from_file_location(f"{dataset_name}_solver", module_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    solver_cls = getattr(module, class_name)
+    print(f"meta.json not found at {meta_path.resolve()}; generating it for dataset {dataset_name}...")
+    solver_cls(root=data_root).run()
+    return meta_path.exists()
+
 # Path to datasets
 data_root_mvtec = Path(r"C:\Users\Administrator\Desktop\dataset\MVTec")
 data_root_mvtec_loco = Path(r"C:\Users\Administrator\Desktop\dataset\MVTec_loco")
-data_root_microled = Path(r"C:\Users\Administrator\Desktop\dataset\LED\microled_AD")
-data_root_miniled = Path(r"C:\Users\Administrator\Desktop\dataset\LED\miniled_AD")
+data_root_microled = Path(r"C:\Users\Administrator\Desktop\dataset\LED2\microled_AD")
+data_root_miniled = Path(r"C:\Users\Administrator\Desktop\dataset\LED2\miniled_AD")
+data_root_hhled = Path(r"C:\Users\Administrator\Desktop\dataset\LED2\hhled_AD")
 
 default_checkpoint = project_root / "checkpoints" / "test_on_mvtec.pth"
 
 # Define test configurations
 # Uncomment the configuration you want to run
 test_configs = [
-    {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all", "checkpoint": default_checkpoint},
+    # {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all", "checkpoint": default_checkpoint},
     # {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "breakfast_box", "checkpoint": default_checkpoint},
     # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "bottle", "checkpoint": default_checkpoint},
     # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "all", "checkpoint": default_checkpoint},
-    # {"dataset": "microled", "path": data_root_microled, "class_name": "all", "checkpoint": default_checkpoint},
+    {"dataset": "microled", "path": data_root_microled, "class_name": "all", "checkpoint": default_checkpoint},
     # {"dataset": "miniled", "path": data_root_miniled, "class_name": "all", "checkpoint": default_checkpoint},
+    # {"dataset": "hhled", "path": data_root_hhled, "class_name": "all", "checkpoint": default_checkpoint},
 ]
 
 for config in test_configs:
@@ -39,8 +65,7 @@ for config in test_configs:
     if not data_root.exists():
         print(f"Error: Data root not found at {data_root.resolve()} for dataset {test_dataset}")
         continue
-    if not (data_root / "meta.json").exists():
-        print(f"Error: meta.json not found at {(data_root / 'meta.json').resolve()} for dataset {test_dataset}")
+    if not ensure_meta_file(test_dataset, data_root):
         continue
     if not checkpoint_path.exists():
         print(f"Error: Checkpoint not found at {checkpoint_path.resolve()} for dataset {test_dataset}")

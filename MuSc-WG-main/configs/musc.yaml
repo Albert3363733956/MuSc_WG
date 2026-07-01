@@ -15,16 +15,16 @@ msm:
   
 device: 0
 testing:
-  output_dir: 'output_clip'
+  output_dir: 'output_hhled_定性'
 
-  desktop_results_dir: C:\Users\Administrator\Desktop\效率分析\ViT-L-14-336\hhled\s=1 # 修改这里控制复制到桌面的MuSc结果表文件夹路径
+  desktop_results_dir: C:\Users\Administrator\Desktop\hhled定性分析 # 修改这里控制复制到桌面的MuSc结果表文件夹路径
   desktop_results_filename: 'results.xlsx' # 修改这里控制复制到桌面的MuSc结果表文件名
   module_profile_filename: 'musc_module_profile.xlsx' # 修改这里控制复制到桌面的模块分析表文件名
   
   vis: True
   vis_type: single_norm # choice ['single_norm', 'whole_norm']
   save_excel: True
-  vis_tsne: False
+  vis_tsne: True
   tsne_perplexity: 30
   tsne_n_iter: 1000
   tsne_source: 'lnamd' # 'class' or 'lnamd'

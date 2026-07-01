@@ -1,8 +1,10 @@
 import cv2
 import os
+import hashlib
 from utils.transforms import normalize
 import numpy as np
 import torch
+from PIL import Image
 # def visualizer(pathes, anomaly_map, img_size, save_path, cls_name):
 #     for idx, path in enumerate(pathes):
 #         cls = path.split('/')[-2]
@@ -28,6 +30,25 @@ def apply_ad_scoremap(image, scoremap, alpha=0.5):
     scoremap = cv2.applyColorMap(scoremap, cv2.COLORMAP_JET)
     scoremap = cv2.cvtColor(scoremap, cv2.COLOR_BGR2RGB)
     return (alpha * np_image + (1 - alpha) * scoremap).astype(np.uint8)
+
+def make_output_base(rel_path, max_len=72):
+    base = os.path.splitext(rel_path)[0]
+    if len(base) <= max_len:
+        return base
+
+    digest = hashlib.md5(base.encode("utf-8")).hexdigest()[:10]
+    parts = base.split("-")
+    prefix = "-".join(parts[:3]) if len(parts) >= 3 else base
+    prefix = prefix[:max_len - len(digest) - 1].rstrip("-_. ")
+    return f"{prefix}-{digest}"
+
+def read_image_rgb(img_path, img_size):
+    return np.asarray(
+        Image.open(img_path).convert("RGB").resize((img_size, img_size), Image.BILINEAR)
+    ).copy()
+
+def save_rgb_image(path, image):
+    Image.fromarray(image.astype(np.uint8)).save(path)
 
 # def visualizer(path, mask,anomaly_map, img_size):
 #     filename = os.path.basename(path)
@@ -63,20 +84,20 @@ def visualizer(img_path, gt_mask, anomaly_map, save_dir, img_size=518, data_dir=
     # 解析文件名 (去掉前面的路径，只保留 datasets 后面的部分)
     # Use os.path.normpath and string replacement to handle different OS path separators
     norm_img_path = os.path.normpath(img_path)
-    norm_data_dir = os.path.normpath(data_dir)
+    norm_data_dir = os.path.normpath(data_dir) if data_dir is not None else None
     
     # Extract relative path robustly
-    if norm_data_dir in norm_img_path:
+    if norm_data_dir is not None and norm_data_dir in norm_img_path:
         rel_path = norm_img_path.replace(norm_data_dir, "").lstrip(os.sep)
     else:
         # Fallback if split fails
         rel_path = os.path.basename(img_path)
         
     rel_path = rel_path.replace(os.sep, "-").replace("/", "-")     # e.g. "bottle-test-broken_small-000.png"
-    base = rel_path.replace(".png", "")       # e.g. "bottle-test-broken_small-000"
+    base = make_output_base(rel_path)       # e.g. "bottle-test-broken_small-000"
 
     # 读取原图并resize (RGB)
-    ori = cv2.cvtColor(cv2.resize(cv2.imread(img_path), (img_size, img_size)), cv2.COLOR_BGR2RGB)
+    ori = read_image_rgb(img_path, img_size)
 
     # ---------- GT 可视化 ----------
     if isinstance(gt_mask, torch.Tensor):
@@ -84,7 +105,7 @@ def visualizer(img_path, gt_mask, anomaly_map, save_dir, img_size=518, data_dir=
     gt_mask = cv2.resize(gt_mask, (img_size, img_size), interpolation=cv2.INTER_NEAREST)
     gt_vis = draw_mask_contour(ori, gt_mask)
     save_gt = os.path.join(save_dir, f"{base}_gt.png")
-    cv2.imwrite(save_gt, cv2.cvtColor(gt_vis, cv2.COLOR_RGB2BGR))
+    save_rgb_image(save_gt, gt_vis)
 
     # ---------- 异常图可视化 ----------
     if isinstance(anomaly_map, torch.Tensor):
@@ -95,6 +116,6 @@ def visualizer(img_path, gt_mask, anomaly_map, save_dir, img_size=518, data_dir=
     anomaly_map = normalize(anomaly_map)
     vis = apply_ad_scoremap(ori, anomaly_map)
     save_vis = os.path.join(save_dir, f"{base}_MRAD.png")
-    cv2.imwrite(save_vis, cv2.cvtColor(vis, cv2.COLOR_RGB2BGR))
+    save_rgb_image(save_vis, vis)
 
     print(f"Saved:\n {save_gt}\n {save_vis}")

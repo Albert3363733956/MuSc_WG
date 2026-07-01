@@ -5,6 +5,13 @@ import numpy as np
 from torch.utils.data import Dataset
 
 
+def imread(path, flags):
+    data = np.fromfile(path, dtype=np.uint8)
+    if data.size == 0:
+        return None
+    return cv2.imdecode(data, flags)
+
+
 class CLIPDataset(Dataset):
     def __init__(self, load_function, category, phase, k_shot):
 
@@ -35,12 +42,16 @@ class CLIPDataset(Dataset):
 
     def __getitem__(self, idx):
         img_path, gt, label, img_type = self.img_paths[idx], self.gt_paths[idx], self.labels[idx], self.types[idx]
-        img = cv2.imread(img_path, cv2.IMREAD_COLOR)
+        img = imread(img_path, cv2.IMREAD_COLOR)
+        if img is None:
+            raise FileNotFoundError(f'Failed to read image: {img_path}')
 
         if gt == 0:
-            gt = np.zeros([img.shape[0], img.shape[0]])
+            gt = np.zeros([img.shape[0], img.shape[1]])
         else:
-            gt = cv2.imread(gt, cv2.IMREAD_GRAYSCALE)
+            gt = imread(gt, cv2.IMREAD_GRAYSCALE)
+            if gt is None:
+                raise FileNotFoundError(f'Failed to read mask: {self.gt_paths[idx]}')
             gt[gt > 0] = 255
 
         img = cv2.resize(img, (1024, 1024))

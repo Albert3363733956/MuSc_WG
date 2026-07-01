@@ -5,6 +5,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from image_io import write_image_cv2
 
 ##
 from sklearn.manifold import TSNE
@@ -44,13 +45,12 @@ def plot_sample_cv2(names, imgs, scores_: dict, gts, save_folder=None):
     # save imgs
     for idx in range(total_number):
         # cv2.imwrite(os.path.join(save_folder, f'{names[idx]}_ori.jpg'), imgs[idx])
-        cv2.imwrite(os.path.join(save_folder, f'{names[idx]}_gt.png'), mask_imgs[idx])
+        write_image_cv2(os.path.join(save_folder, f'{names[idx]}_gt.png'), mask_imgs[idx])
 
         for key in scores:
             heat_map = cv2.applyColorMap(scores[key][idx], cv2.COLORMAP_JET)
             visz_map = cv2.addWeighted(heat_map, 0.5, imgs[idx], 0.5, 0)
-            cv2.imwrite(os.path.join(save_folder, f'{names[idx]}_{key}.png'),
-                        visz_map)
+            write_image_cv2(os.path.join(save_folder, f'{names[idx]}_{key}.png'), visz_map)
 
 
 
@@ -62,7 +62,7 @@ def plot_feat_cv2(names, feat, save_folder=None):
     # save imgs
     for idx in range(total_number):
         feat[idx] = cv2.resize(feat[idx], (256, 256), interpolation=cv2.INTER_NEAREST)
-        cv2.imwrite(os.path.join(save_folder, f'{names[idx]}_feat.jpg'), feat[idx])
+        write_image_cv2(os.path.join(save_folder, f'{names[idx]}_feat.jpg'), feat[idx])
 
 
 

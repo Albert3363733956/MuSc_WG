@@ -3,6 +3,8 @@
 import os
 import cv2
 import json
+import hashlib
+import re
 import torch
 import torch.nn as nn
 import random
@@ -51,9 +53,12 @@ def setup_seed(seed):
 
 def normalize(pred, max_value=None, min_value=None):
     if max_value is None or min_value is None:
-        return (pred - pred.min()) / (pred.max() - pred.min())
-    else:
-        return (pred - min_value) / (max_value - min_value)
+        min_value = pred.min()
+        max_value = pred.max()
+    denom = max_value - min_value
+    if abs(float(denom)) < 1e-8:
+        return np.zeros_like(pred, dtype=np.float32)
+    return (pred - min_value) / denom
 
 
 def apply_ad_scoremap(image, scoremap, alpha=0.5):
@@ -62,6 +67,38 @@ def apply_ad_scoremap(image, scoremap, alpha=0.5):
     scoremap = cv2.applyColorMap(scoremap, cv2.COLORMAP_JET)
     scoremap = cv2.cvtColor(scoremap, cv2.COLOR_BGR2RGB)
     return (alpha * np_image + (1 - alpha) * scoremap).astype(np.uint8)
+
+
+def read_rgb_image(image_path):
+    try:
+        return np.array(Image.open(image_path).convert("RGB"))
+    except Exception:
+        image_bytes = np.fromfile(image_path, dtype=np.uint8)
+        image = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
+        if image is None:
+            raise FileNotFoundError(f"Unable to read image: {image_path}")
+        return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+
+def make_safe_stem(stem, max_len=80):
+    safe_stem = re.sub(r'[^A-Za-z0-9._-]+', '_', stem).strip('._-')
+    if not safe_stem:
+        safe_stem = 'image'
+    if len(safe_stem) > max_len:
+        digest = hashlib.sha1(stem.encode('utf-8', errors='ignore')).hexdigest()[:10]
+        safe_stem = f'{safe_stem[:max_len - 11]}_{digest}'
+    return safe_stem
+
+
+def write_bgr_image(path, image):
+    path = os.path.abspath(path)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    ext = os.path.splitext(path)[1] or '.png'
+    success, encoded = cv2.imencode(ext, image)
+    if not success:
+        raise ValueError(f'Unable to encode image for: {path}')
+    with open(path, 'wb') as f:
+        f.write(encoded.tobytes())
 
 
 def cal_pro_score(masks, amaps, max_step=200, expect_fpr=0.3):
@@ -105,10 +142,10 @@ def vis(img_path, gt_mask, anomaly_map, save_dir, img_size=518, data_dir=None):
     else:
         rel_path = os.path.basename(img_path)
         
-    rel_path = rel_path.replace(os.sep, "-").replace("/", "-")     
-    base = rel_path.replace(".png", "").replace(".jpg", "")
+    rel_path = rel_path.replace(os.sep, "-").replace("/", "-")
+    base = make_safe_stem(os.path.splitext(rel_path)[0])
 
-    ori = cv2.cvtColor(cv2.resize(cv2.imread(img_path), (img_size, img_size)), cv2.COLOR_BGR2RGB)
+    ori = cv2.resize(read_rgb_image(img_path), (img_size, img_size))
 
     # GT
     if isinstance(gt_mask, torch.Tensor):
@@ -137,9 +174,9 @@ def vis(img_path, gt_mask, anomaly_map, save_dir, img_size=518, data_dir=None):
     vis_img = apply_ad_scoremap(ori, anomaly_map)
 
     save_vis = os.path.join(save_dir, f"{base}_WinCLIP.png")
-    cv2.imwrite(save_vis, cv2.cvtColor(vis_img, cv2.COLOR_RGB2BGR))
+    write_bgr_image(save_vis, cv2.cvtColor(vis_img, cv2.COLOR_RGB2BGR))
     save_gt = os.path.join(save_dir, f"{base}_gt.png")
-    cv2.imwrite(save_gt, cv2.cvtColor(ori_gt, cv2.COLOR_RGB2BGR))
+    write_bgr_image(save_gt, cv2.cvtColor(ori_gt, cv2.COLOR_RGB2BGR))
 
 class prompt_order():
     def __init__(self) -> None:
@@ -342,7 +379,7 @@ def test(args,):
     few_shot_features = args.few_shot_features
     dataset_dir = args.data_path
     save_path = args.save_path
-    dataset_name = args.dataset
+    dataset_name = normalize_dataset_name(args.dataset)
 
     if not os.path.exists(save_path):
         os.makedirs(save_path)
@@ -384,38 +421,35 @@ def test(args,):
                                                  max_size=None, antialias=None)
     preprocess.transforms[1] = transforms.CenterCrop(size=(img_size, img_size))
     if dataset_name == 'mvtec':
-        obj_list = ['carpet', 'bottle', 'hazelnut', 'leather', 'cable', 'capsule', 'grid', 'pill',
-                    'transistor', 'metal_nut', 'screw', 'toothbrush', 'zipper', 'tile', 'wood']
+        obj_list = get_dataset_classnames(dataset_name, root=dataset_dir, mode='test')
         if args.class_name != "all":
             obj_list = [args.class_name]
         test_data = MVTecDataset(root=dataset_dir, transform=preprocess, target_transform=transform,
-                                 aug_rate=-1, mode='test', obj_name=args.class_name)
+                                 aug_rate=-1, mode='test', obj_name=args.class_name, class_names=obj_list)
     elif dataset_name == 'visa':
-        obj_list = ['candle', 'capsules', 'cashew', 'chewinggum', 'fryum', 'macaroni1', 'macaroni2',
-                    'pcb1', 'pcb2', 'pcb3', 'pcb4', 'pipe_fryum']
+        obj_list = get_dataset_classnames(dataset_name, root=dataset_dir, mode='test')
         if args.class_name != "all":
             obj_list = [args.class_name]
         test_data = VisaDataset(root=dataset_dir, transform=preprocess, target_transform=transform, mode='test')
-    elif dataset_name == 'microled':
-        obj_list = list(json.load(open(f'{dataset_dir}/meta.json', 'r'))['test'].keys())
+    elif dataset_name in ['microled', 'miniled', 'hhled']:
+        obj_list = get_dataset_classnames(dataset_name, root=dataset_dir, mode='test')
         if args.class_name != "all":
             obj_list = [args.class_name]
-        # You may need to import or implement MicroLEDDataset if it differs, for now using MVTecDataset format
-        test_data = MVTecDataset(root=dataset_dir, transform=preprocess, target_transform=transform,
-                                 aug_rate=-1, mode='test', obj_name=args.class_name)
-    elif dataset_name == 'miniled':
-        obj_list = list(json.load(open(f'{dataset_dir}/meta.json', 'r'))['test'].keys())
-        if args.class_name != "all":
-            obj_list = [args.class_name]
-        # You may need to import or implement MiniLEDDataset if it differs, for now using MVTecDataset format
-        test_data = MVTecDataset(root=dataset_dir, transform=preprocess, target_transform=transform,
-                                 aug_rate=-1, mode='test', obj_name=args.class_name)
+        if has_meta(dataset_dir):
+            test_data = MVTecDataset(root=dataset_dir, transform=preprocess, target_transform=transform,
+                                     aug_rate=-1, mode='test', obj_name=args.class_name, class_names=obj_list)
+        else:
+            test_data = FolderAnomalyDataset(root=dataset_dir, transform=preprocess, target_transform=transform,
+                                             mode='test', obj_name=args.class_name, class_names=obj_list,
+                                             dataset_name=dataset_name)
     elif dataset_name in ['btad', 'mvtec_loco']:
-        obj_list = list(json.load(open(f'{dataset_dir}/meta.json', 'r'))['test'].keys())
+        obj_list = get_dataset_classnames(dataset_name, root=dataset_dir, mode='test')
         if args.class_name != "all":
             obj_list = [args.class_name]
         test_data = MVTecDataset(root=dataset_dir, transform=preprocess, target_transform=transform,
-                                 aug_rate=-1, mode='test', obj_name=args.class_name)
+                                 aug_rate=-1, mode='test', obj_name=args.class_name, class_names=obj_list)
+    else:
+        raise ValueError(f"Unsupported dataset: {args.dataset}")
     test_dataloader = torch.utils.data.DataLoader(test_data, batch_size=32, shuffle=False)
 
 

@@ -14,6 +14,7 @@ from .brain_mri import BrainMRI_CLS_NAMES,BrainMRIDataset,BrainMRI_ROOT
 from .br35h import Br35h_CLS_NAMES,Br35hDataset,Br35h_ROOT
 from .microled import MICROLED_CLS_NAMES, MicroLEDDataset, MICROLED_ROOT
 from .miniled import MINILED_CLS_NAMES, MiniLEDDataset, MINILED_ROOT
+from .hhled import HHLED_CLS_NAMES, HHLEDDataset, HHLED_ROOT
 from .mvtec_loco import MVTEC_LOCO_CLS_NAMES, MVTecLOCODataset, MVTEC_LOCO_ROOT
 from torch.utils.data import ConcatDataset
 
@@ -33,7 +34,11 @@ dataset_dict = {
     'tn3k': (TN3K_CLS_NAMES, TN3KDataset, TN3K_ROOT),
     'visa': (VISA_CLS_NAMES, VisaDataset, VISA_ROOT),
     'microled': (MICROLED_CLS_NAMES, MicroLEDDataset, MICROLED_ROOT),
+    'microled_ad': (MICROLED_CLS_NAMES, MicroLEDDataset, MICROLED_ROOT),
     'miniled': (MINILED_CLS_NAMES, MiniLEDDataset, MINILED_ROOT),
+    'miniled_ad': (MINILED_CLS_NAMES, MiniLEDDataset, MINILED_ROOT),
+    'hhled': (HHLED_CLS_NAMES, HHLEDDataset, HHLED_ROOT),
+    'hhled_ad': (HHLED_CLS_NAMES, HHLEDDataset, HHLED_ROOT),
     'mvtec_loco': (MVTEC_LOCO_CLS_NAMES, MVTecLOCODataset, MVTEC_LOCO_ROOT),
 }
 

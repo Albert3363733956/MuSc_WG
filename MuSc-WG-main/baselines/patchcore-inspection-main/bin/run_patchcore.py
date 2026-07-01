@@ -15,12 +15,16 @@ import patchcore.sampler
 import patchcore.utils
 
 LOGGER = logging.getLogger(__name__)
+DEFAULT_NUM_WORKERS = 0 if sys.platform.startswith("win") else 8
 
 _DATASETS = {
     "mvtec": ["patchcore.datasets.mvtec", "MVTecDataset"],
     "visa": ["patchcore.datasets.visa", "VisaDataset"],
     "btad": ["patchcore.datasets.btad", "BTADDataset"],
     "mvtec_loco": ["patchcore.datasets.mvtec_loco", "MVTecLOCODataset"],
+    "microled": ["patchcore.datasets.mvtec", "MVTecDataset"],
+    "miniled": ["patchcore.datasets.mvtec", "MVTecDataset"],
+    "hhled": ["patchcore.datasets.mvtec", "MVTecDataset"],
 }
 
 
@@ -341,7 +345,7 @@ def sampler(name, percentage):
 @click.option("--subdatasets", "-d", multiple=True, type=str, required=True)
 @click.option("--train_val_split", type=float, default=1, show_default=True)
 @click.option("--batch_size", default=2, type=int, show_default=True)
-@click.option("--num_workers", default=8, type=int, show_default=True)
+@click.option("--num_workers", default=DEFAULT_NUM_WORKERS, type=int, show_default=True)
 @click.option("--resize", default=256, type=int, show_default=True)
 @click.option("--imagesize", default=224, type=int, show_default=True)
 @click.option("--augment", is_flag=True)

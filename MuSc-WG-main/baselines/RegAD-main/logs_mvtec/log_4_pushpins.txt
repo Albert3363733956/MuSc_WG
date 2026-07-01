@@ -1,0 +1,3 @@
+{'obj': 'pushpins', 'data_type': 'mvtec_loco', 'data_path': 'C:\\Users\\Administrator\\Desktop\\dataset\\MVTec_loco', 'epochs': 50, 'batch_size': 32, 'img_size': 224, 'lr': 0.0001, 'momentum': 0.9, 'seed': 10, 'shot': 4, 'inferences': 10, 'stn_mode': 'rotation_scale', 'input_channel': 3, 'prefix': '2026-06-08-8697', 'save_dir': './logs_mvtec/', 'save_model_dir': './logs_mvtec/rotation_scale/4/pushpins/'}
+---------rotation_scale--------
+   1/ 50 ----- [[2026-06-08 22:46:01]] [Need: 00:00:00]

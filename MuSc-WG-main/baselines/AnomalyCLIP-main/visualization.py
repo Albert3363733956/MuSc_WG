@@ -3,6 +3,7 @@ import os
 from utils import normalize
 import numpy as np
 import torch
+from PIL import Image
 
 def draw_mask_contour(image, mask):
     """
@@ -21,6 +22,14 @@ def apply_ad_scoremap(image, scoremap, alpha=0.5):
     scoremap = cv2.applyColorMap(scoremap, cv2.COLORMAP_JET)
     scoremap = cv2.cvtColor(scoremap, cv2.COLOR_BGR2RGB)
     return (alpha * np_image + (1 - alpha) * scoremap).astype(np.uint8)
+
+def read_image_rgb(img_path, img_size):
+    return np.asarray(
+        Image.open(img_path).convert("RGB").resize((img_size, img_size), Image.BILINEAR)
+    )
+
+def save_rgb_image(path, image):
+    Image.fromarray(image.astype(np.uint8)).save(path)
 
 def visualizer(img_path, gt_mask, anomaly_map, save_dir, img_size=518, data_dir=None):
     """
@@ -51,7 +60,7 @@ def visualizer(img_path, gt_mask, anomaly_map, save_dir, img_size=518, data_dir=
     base = rel_path.replace(".png", "")       # e.g. "bottle-test-broken_small-000"
 
     # 读取原图并resize (RGB)
-    ori = cv2.cvtColor(cv2.resize(cv2.imread(img_path), (img_size, img_size)), cv2.COLOR_BGR2RGB)
+    ori = read_image_rgb(img_path, img_size)
 
     # ---------- GT 可视化 ----------
     if isinstance(gt_mask, torch.Tensor):
@@ -59,7 +68,7 @@ def visualizer(img_path, gt_mask, anomaly_map, save_dir, img_size=518, data_dir=
     gt_mask = cv2.resize(gt_mask, (img_size, img_size), interpolation=cv2.INTER_NEAREST)
     gt_vis = draw_mask_contour(ori, gt_mask)
     save_gt = os.path.join(save_dir, f"{base}_gt.png")
-    cv2.imwrite(save_gt, cv2.cvtColor(gt_vis, cv2.COLOR_RGB2BGR))
+    save_rgb_image(save_gt, gt_vis)
 
     # ---------- 异常图可视化 ----------
     if isinstance(anomaly_map, torch.Tensor):
@@ -70,6 +79,6 @@ def visualizer(img_path, gt_mask, anomaly_map, save_dir, img_size=518, data_dir=
     anomaly_map = normalize(anomaly_map)
     vis = apply_ad_scoremap(ori, anomaly_map)
     save_vis = os.path.join(save_dir, f"{base}_AnomalyCLIP.png")
-    cv2.imwrite(save_vis, cv2.cvtColor(vis, cv2.COLOR_RGB2BGR))
+    save_rgb_image(save_vis, vis)
 
     print(f"Saved:\n {save_gt}\n {save_vis}")

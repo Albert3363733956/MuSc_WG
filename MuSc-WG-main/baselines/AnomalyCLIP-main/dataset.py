@@ -46,6 +46,10 @@ def generate_class_info(dataset_name):
         obj_list = [
             'miniled_TypeA_1', 'miniled_TypeA_2', 'miniled_TypeB_1', 'miniled_TypeB_2',
         ]
+    elif dataset_name in ['hhled', 'hhled_ad']:
+        obj_list = [
+            'led_6core', 'led_8core',
+        ]
     for k, index in zip(obj_list, range(len(obj_list))):
         class_name_map_class_id[k] = index
 

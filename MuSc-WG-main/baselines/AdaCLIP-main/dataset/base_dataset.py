@@ -9,6 +9,7 @@ import torch.utils.data as data
 from PIL import Image
 import cv2
 from config import DATA_ROOT
+from image_io import read_image_cv2
 
 
 class DataSolver:
@@ -109,7 +110,7 @@ class BaseDataset(data.Dataset):
             img, img_mask = self.combine_img(cls_name)
         else:
             if img_path.endswith('.tif'):
-                img = cv2.imread(img_path)
+                img = read_image_cv2(img_path)
                 img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
             else:
                 img = Image.open(img_path).convert('RGB')

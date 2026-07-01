@@ -14,6 +14,7 @@ import cv2
 # Importing from local modules
 from tools import write2csv, setup_seed, Logger
 from dataset import get_data, dataset_dict
+from image_io import read_image_cv2, write_image_cv2
 from method import AdaCLIP_Trainer
 from PIL import Image
 import numpy as np
@@ -132,7 +133,7 @@ def train(args):
 
     elif args.testing_model == 'image':
         assert os.path.isfile(args.image_path), f"Please verify the input image path: {args.image_path}"
-        ori_image = cv2.resize(cv2.imread(args.image_path), (args.image_size, args.image_size))
+        ori_image = cv2.resize(read_image_cv2(args.image_path), (args.image_size, args.image_size))
         pil_img = Image.open(args.image_path).convert('RGB')
 
         img_input = model.preprocess(pil_img).unsqueeze(0)
@@ -156,7 +157,7 @@ def train(args):
         vis_map = cv2.hconcat([ori_image, vis_map])
         save_path = os.path.join(args.save_path, args.save_name)
         print(f"Anomaly detection results are saved in {save_path}, with an anomaly of {anomaly_score:.3f} ")
-        cv2.imwrite(save_path, vis_map)
+        write_image_cv2(save_path, vis_map)
 
 def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")

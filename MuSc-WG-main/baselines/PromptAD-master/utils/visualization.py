@@ -15,6 +15,22 @@ from sklearn.decomposition import PCA
 import matplotlib.ticker as mtick
 
 
+def safe_filename(name):
+    invalid_chars = '<>:"/\\|?*'
+    return ''.join('_' if char in invalid_chars else char for char in name)
+
+
+def imwrite(path, image):
+    ext = os.path.splitext(path)[1]
+    if not ext:
+        ext = '.jpg'
+    success, data = cv2.imencode(ext, image)
+    if not success:
+        raise IOError(f'Failed to encode image for path: {path}')
+    with open(path, 'wb') as f:
+        f.write(data.tobytes())
+
+
 def plot_sample_cv2(names, imgs, scores_: dict, gts, save_folder=None):
     # get subplot number
     total_number = len(imgs)
@@ -37,14 +53,15 @@ def plot_sample_cv2(names, imgs, scores_: dict, gts, save_folder=None):
 
     # save imgs
     for idx in range(total_number):
-        cv2.imwrite(os.path.join(save_folder, f'{names[idx]}_ori.jpg'), imgs[idx])
-        cv2.imwrite(os.path.join(save_folder, f'{names[idx]}_gt.jpg'), mask_imgs[idx])
+        filename = safe_filename(names[idx])
+        imwrite(os.path.join(save_folder, f'{filename}_ori.jpg'), imgs[idx])
+        imwrite(os.path.join(save_folder, f'{filename}_gt.jpg'), mask_imgs[idx])
 
         for key in scores:
             heat_map = cv2.applyColorMap(scores[key][idx], cv2.COLORMAP_JET)
             visz_map = cv2.addWeighted(heat_map, 0.5, imgs[idx], 0.5, 0)
-            cv2.imwrite(os.path.join(save_folder, f'{names[idx]}_{key}.jpg'),
-                        visz_map)
+            imwrite(os.path.join(save_folder, f'{filename}_{key}.jpg'),
+                    visz_map)
 
 
 def plot_anomaly_score_distributions(scores: dict, ground_truths_list, save_folder, class_name):

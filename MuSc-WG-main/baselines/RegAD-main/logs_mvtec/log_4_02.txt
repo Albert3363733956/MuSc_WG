@@ -1,0 +1,6 @@
+{'obj': '02', 'data_type': 'btad', 'data_path': 'C:\\Users\\Administrator\\Desktop\\dataset\\BTech_Dataset_transformed', 'epochs': 50, 'batch_size': 32, 'img_size': 224, 'lr': 0.0001, 'momentum': 0.9, 'seed': 10, 'shot': 4, 'inferences': 10, 'stn_mode': 'rotation_scale', 'input_channel': 3, 'prefix': '2026-06-06-2415', 'save_dir': './logs_mvtec/', 'save_model_dir': './logs_mvtec/rotation_scale/4/02/'}
+---------rotation_scale--------
+   1/ 50 ----- [[2026-06-06 12:40:13]] [Need: 00:00:00]
+Test Epoch(img, pixel): 0 (0.776817, 0.958648) best: (0.777, 0.959)
+Train Epoch: 1 Total_Loss: 0.005536
+   2/ 50 ----- [[2026-06-06 13:07:14]] [Need: 20:36:46]

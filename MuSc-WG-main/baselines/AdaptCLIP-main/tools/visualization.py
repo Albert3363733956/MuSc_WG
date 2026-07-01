@@ -1,10 +1,24 @@
 import os
+import hashlib
 
 import cv2
 import numpy as np
 import torch
+from PIL import Image
 
 from .utils import normalize
+
+
+def make_output_base(rel_path, max_len=72):
+    base = os.path.splitext(rel_path)[0]
+    if len(base) <= max_len:
+        return base
+
+    digest = hashlib.md5(base.encode("utf-8")).hexdigest()[:10]
+    parts = base.split("-")
+    prefix = "-".join(parts[:3]) if len(parts) >= 3 else base
+    prefix = prefix[:max_len - len(digest) - 1].rstrip("-_. ")
+    return f"{prefix}-{digest}"
 
 
 def visualizer(img_path, gt_mask, anomaly_map, save_dir, img_size=518, data_dir=None):
@@ -20,7 +34,7 @@ def visualizer(img_path, gt_mask, anomaly_map, save_dir, img_size=518, data_dir=
         rel_path = os.path.basename(img_path)
         
     rel_path = rel_path.replace(os.sep, "-").replace("/", "-")     
-    base = rel_path.replace(".png", "")
+    base = make_output_base(rel_path)
     
     # AdaptCLIP's img_size can be a single int or tuple. If int, handle it.
     if isinstance(img_size, int):
@@ -28,13 +42,9 @@ def visualizer(img_path, gt_mask, anomaly_map, save_dir, img_size=518, data_dir=
     else:
         resize_dims = (img_size[0], img_size[1])
         
-    # Read original image directly from path instead of taking it as a tensor
-    ori_img = cv2.imread(img_path)
-    if ori_img is None:
-        print(f"Warning: Could not read image at {img_path}")
-        return
-    ori_img = cv2.cvtColor(ori_img, cv2.COLOR_BGR2RGB)
-    vis = cv2.resize(ori_img.copy(), resize_dims)  # RGB
+    # PIL handles Windows paths containing non-ASCII characters more reliably than cv2.imread.
+    ori_img = np.asarray(Image.open(img_path).convert("RGB"))
+    vis = np.asarray(Image.fromarray(ori_img).resize(resize_dims, Image.BILINEAR)).copy()
     
     # 异常图
     mask = normalize(anomaly_map)
@@ -48,17 +58,15 @@ def visualizer(img_path, gt_mask, anomaly_map, save_dir, img_size=518, data_dir=
     gt_mask = cv2.resize(gt_mask, resize_dims, interpolation=cv2.INTER_NEAREST)
     contours, _ = cv2.findContours(gt_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    vis = cv2.cvtColor(vis, cv2.COLOR_RGB2BGR)  # BGR
-    
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     save_vis = os.path.join(save_dir, f"{base}_AdaptCLIP.png")
-    cv2.imwrite(save_vis, vis)
+    Image.fromarray(vis.astype(np.uint8)).save(save_vis)
     
     # 保存一张纯GT的图做对比
-    ori_gt = cv2.resize(ori_img.copy(), resize_dims)
+    ori_gt = np.asarray(Image.fromarray(ori_img).resize(resize_dims, Image.BILINEAR)).copy()
     cv2.drawContours(ori_gt, contours, -1, (0, 255, 0), 2)
-    cv2.imwrite(os.path.join(save_dir, f"{base}_gt.png"), cv2.cvtColor(ori_gt, cv2.COLOR_RGB2BGR))
+    Image.fromarray(ori_gt.astype(np.uint8)).save(os.path.join(save_dir, f"{base}_gt.png"))
 
 
 def apply_ad_scoremap(image, scoremap, alpha=0.5):

@@ -211,6 +211,10 @@ class MiniledDataset(MVTecDataset):
     pass
 
 
+class HHLEDDataset(MVTecDataset):
+    pass
+
+
 class BTADDataset(_MetaMaskDataset):
     pass
 

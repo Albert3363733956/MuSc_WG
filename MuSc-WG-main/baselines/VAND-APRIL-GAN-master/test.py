@@ -2,6 +2,8 @@ import time
 import os
 import cv2
 import json
+import hashlib
+import re
 import torch
 import random
 import logging
@@ -17,7 +19,7 @@ from sklearn.metrics import auc, roc_auc_score, average_precision_score, f1_scor
 import open_clip
 from few_shot import memory
 from model import LinearLayer
-from dataset import VisaDataset, MVTecDataset, MicroledDataset, MiniledDataset, BTADDataset, MVTecLOCODataset
+from dataset import VisaDataset, MVTecDataset, MicroledDataset, MiniledDataset, HHLEDDataset, BTADDataset, MVTecLOCODataset
 from prompt_ensemble import encode_text_with_prompt_ensemble
 
 
@@ -43,6 +45,38 @@ def apply_ad_scoremap(image, scoremap, alpha=0.5):
     scoremap = cv2.applyColorMap(scoremap, cv2.COLORMAP_JET)
     scoremap = cv2.cvtColor(scoremap, cv2.COLOR_BGR2RGB)
     return (alpha * np_image + (1 - alpha) * scoremap).astype(np.uint8)
+
+
+def read_rgb_image(image_path):
+    try:
+        return np.array(Image.open(image_path).convert("RGB"))
+    except Exception:
+        image_bytes = np.fromfile(image_path, dtype=np.uint8)
+        image = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
+        if image is None:
+            raise FileNotFoundError(f"Unable to read image: {image_path}")
+        return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+
+def make_safe_stem(stem, max_len=80):
+    safe_stem = re.sub(r'[^A-Za-z0-9._-]+', '_', stem).strip('._-')
+    if not safe_stem:
+        safe_stem = 'image'
+    if len(safe_stem) > max_len:
+        digest = hashlib.sha1(stem.encode('utf-8', errors='ignore')).hexdigest()[:10]
+        safe_stem = f'{safe_stem[:max_len - 11]}_{digest}'
+    return safe_stem
+
+
+def write_bgr_image(path, image):
+    path = os.path.abspath(path)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    ext = os.path.splitext(path)[1] or '.png'
+    success, encoded = cv2.imencode(ext, image)
+    if not success:
+        raise ValueError(f"Unable to encode image for: {path}")
+    with open(path, 'wb') as f:
+        f.write(encoded.tobytes())
 
 
 def cal_pro_score(masks, amaps, max_step=200, expect_fpr=0.3):
@@ -132,6 +166,8 @@ def test(args):
         test_data = MicroledDataset(root=dataset_dir, transform=preprocess, target_transform=transform, aug_rate=-1, mode='test', obj_name=args.class_name)
     elif dataset_name == 'miniled':
         test_data = MiniledDataset(root=dataset_dir, transform=preprocess, target_transform=transform, aug_rate=-1, mode='test', obj_name=args.class_name)
+    elif dataset_name == 'hhled':
+        test_data = HHLEDDataset(root=dataset_dir, transform=preprocess, target_transform=transform, aug_rate=-1, mode='test', obj_name=args.class_name)
     elif dataset_name == 'btad':
         test_data = BTADDataset(root=dataset_dir, transform=preprocess, target_transform=transform, aug_rate=-1, mode='test', obj_name=args.class_name)
     elif dataset_name == 'mvtec_loco':
@@ -227,11 +263,9 @@ def test(args):
                     rel_path = os.path.basename(path)
                     
                 rel_path = rel_path.replace(os.sep, "-").replace("/", "-")
-                base = rel_path.replace(".png", "")
-                
-                ori = cv2.imread(path)
-                ori = cv2.cvtColor(ori, cv2.COLOR_BGR2RGB)
-                ori_img = cv2.resize(ori.copy(), (img_size, img_size))
+                base = make_safe_stem(os.path.splitext(rel_path)[0])
+
+                ori_img = cv2.resize(read_rgb_image(path), (img_size, img_size))
                 
                 # GT contour
                 gt_mask_np = gt_mask[0].squeeze().detach().cpu().numpy()
@@ -248,13 +282,13 @@ def test(args):
                 ori_gt = ori_img.copy()
                 cv2.drawContours(ori_gt, contours, -1, (0, 255, 0), 2)
                 save_gt = os.path.join(save_dir, f"{base}_gt.png")
-                cv2.imwrite(save_gt, cv2.cvtColor(ori_gt, cv2.COLOR_RGB2BGR))
+                write_bgr_image(save_gt, cv2.cvtColor(ori_gt, cv2.COLOR_RGB2BGR))
                 
                 # Anomaly map
                 mask = normalize(anomaly_map[0])
                 vis = apply_ad_scoremap(ori_img, mask)
                 save_vis = os.path.join(save_dir, f"{base}_VAND.png")
-                cv2.imwrite(save_vis, cv2.cvtColor(vis, cv2.COLOR_RGB2BGR))
+                write_bgr_image(save_vis, cv2.cvtColor(vis, cv2.COLOR_RGB2BGR))
     
     end_time_all = time.time()
     efficiency_info = 'VAND: {}ms per image'.format((end_time_all-start_time_all)*1000/dataset_num)

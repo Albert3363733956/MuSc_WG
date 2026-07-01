@@ -2,8 +2,11 @@ import os
 import subprocess
 import sys
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+promptad_root = os.path.abspath(os.path.join(script_dir, '..'))
+
 # Add parent directory to path so we can import datasets
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, promptad_root)
 from datasets import dataset_classes
 
 # Configuration
@@ -11,9 +14,12 @@ device = "0"
 data_root_mvtec = r"C:\Users\Administrator\Desktop\dataset\MVTec"
 data_root_microled = r"C:\Users\Administrator\Desktop\dataset\LED\microled_AD"
 data_root_miniled = r"C:\Users\Administrator\Desktop\dataset\LED\miniled_AD"
+data_root_hhled = r"C:\Users\Administrator\Desktop\dataset\LED2\hhled_AD"
+data_root_btad = r"C:\Users\Administrator\Desktop\dataset\BTech_Dataset_transformed"
+data_root_mvtec_loco = r"C:\Users\Administrator\Desktop\dataset\MVTec_loco"
 
 # Output directory (Project root / output / PromptAD-master)
-output_dir = "../../output/PromptAD-master"
+output_dir = os.path.abspath(os.path.join(promptad_root, '..', '..', 'output', 'PromptAD-master'))
 
 # Define test configurations
 # Note: PromptAD performs few-shot training per class, so we evaluate by running train_cls.py
@@ -22,11 +28,15 @@ output_dir = "../../output/PromptAD-master"
 test_configs = [
     # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "transistor"}, # Single class example
     # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "all"},        # All classes example
-    {"dataset": "microled", "path": data_root_microled, "class_name": "all"},
-    {"dataset": "miniled", "path": data_root_miniled, "class_name": "all"},   # Test all classes in miniled
+    {"dataset": "hhled", "path": data_root_hhled, "class_name": "all"},         # Test all HHLED classes
+    # {"dataset": "btad", "path": data_root_btad, "class_name": "all"},         # Test all BTAD classes
+    # {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all"}, # Test all MVTec LOCO classes
+    # {"dataset": "microled", "path": data_root_microled, "class_name": "all"},
+    # {"dataset": "miniled", "path": data_root_miniled, "class_name": "all"},   # Test all classes in miniled
 ]
 
 shots = [4]  # Changed to 4-shot. PromptAD requires few-shot normal samples to build feature gallery
+seg_batch_size = 16  # Keep segmentation evaluation batches small enough for HHLED on Windows/CUDA.
 
 for config in test_configs:
     test_dataset = config["dataset"]
@@ -57,7 +67,7 @@ for config in test_configs:
                 for task_script in ["train_cls.py", "train_seg.py"]:
                     # Construct the command
                     cmd = [
-                        sys.executable, task_script,
+                        sys.executable, os.path.join(promptad_root, task_script),
                         "--dataset", test_dataset,
                         "--data_path", data_root,
                         "--class_name", target_class,
@@ -67,6 +77,8 @@ for config in test_configs:
                         "--root-dir", output_dir, # Add root_dir to specify save path
                         "--vis", "True"  # Add visualization option
                     ]
+                    if task_script == "train_seg.py":
+                        cmd.extend(["--batch-size", str(seg_batch_size)])
                     
                     # Set environment variable for CUDA
                     env = os.environ.copy()
@@ -77,7 +89,6 @@ for config in test_configs:
                     print(f"{'='*50}\n")
                     
                     try:
-                        subprocess.run(cmd, env=env, check=True)
+                        subprocess.run(cmd, cwd=promptad_root, env=env, check=True)
                     except subprocess.CalledProcessError as e:
                         print(f"Error running command for {target_class} ({task_script}): {e}")
-

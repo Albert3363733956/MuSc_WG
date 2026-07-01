@@ -3,6 +3,10 @@ import subprocess
 import sys
 import json
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PATCHCORE_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, ".."))
+REPO_ROOT = os.path.abspath(os.path.join(PATCHCORE_ROOT, "..", ".."))
+
 # Configuration
 device = "0"
 # Path to datasets
@@ -12,19 +16,20 @@ data_root_btad = r"C:\Users\Administrator\Desktop\dataset\BTech_Dataset_transfor
 data_root_mvtec_loco = r"C:\Users\Administrator\Desktop\dataset\MVTec_loco"
 data_root_microled = r"C:\Users\Administrator\Desktop\dataset\LED\microled_AD"
 data_root_miniled = r"C:\Users\Administrator\Desktop\dataset\LED\miniled_AD"
+data_root_hhled = r"C:\Users\Administrator\Desktop\dataset\LED2\hhled_AD"
 
 # Output directory (Project root / output / patchcore)
-# output_dir = "../../output/PatchCore"
-output_dir = r"C:\Users\Administrator\Desktop\lhc\MuSc-WG-main 4.2\MuSc-WG-main\output\PatchCore"
+output_dir = os.path.join(REPO_ROOT, "output", "PatchCore")
 # Define test configurations
-# We map the datasets as "mvtec" to reuse the MVTecDataset class structure for microled/miniled as well.
+# LED datasets reuse PatchCore's MVTec-compatible folder loader.
 test_configs = [
     # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "bottle"},
-    {"dataset": "visa", "path": data_root_visa, "class_name": "all"},
+    # {"dataset": "visa", "path": data_root_visa, "class_name": "all"},
     # {"dataset": "btad", "path": data_root_btad, "class_name": "all"},
     # {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all"},
     # {"dataset": "microled", "path": data_root_microled, "class_name": "all"},
     # {"dataset": "miniled", "path": data_root_miniled, "class_name": "all"},
+    {"dataset": "hhled", "path": data_root_hhled, "class_name": "all"},
 ]
 
 few_shots = [4]  # Define the number of few-shots to evaluate
@@ -71,14 +76,15 @@ for config in test_configs:
             "dataset",
             "--resize", "256",
             "--imagesize", "224",
-            "--k_shot", str(few_shot) # Pass the k_shot parameter here
+            "--k_shot", str(few_shot), # Pass the k_shot parameter here
+            "--num_workers", "0"
         ]
 
         # Subdatasets argument
         if target_class.lower() == "all":
             meta_path = os.path.join(data_root, "meta.json")
             if os.path.isfile(meta_path):
-                with open(meta_path, "r") as f:
+                with open(meta_path, "r", encoding="utf-8") as f:
                     classes = sorted(json.load(f)["test"].keys())
             else:
                 classes = [d for d in os.listdir(data_root) if os.path.isdir(os.path.join(data_root, d))]
@@ -88,19 +94,19 @@ for config in test_configs:
             cmd.extend(["-d", target_class])
 
         cmd.extend([
-            test_dataset if test_dataset.lower() in ["visa", "btad", "mvtec_loco"] else "mvtec",
+            test_dataset,
             data_root
         ])
 
         # Set environment variable to ensure correct working directory for imports
         env = os.environ.copy()
-        env["PYTHONPATH"] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')) + os.pathsep + env.get("PYTHONPATH", "")
+        env["PYTHONPATH"] = os.path.join(PATCHCORE_ROOT, "src") + os.pathsep + env.get("PYTHONPATH", "")
 
         print(f"\n{'='*50}")
         print(f"Running PatchCore for dataset={test_dataset}, class={target_class}, k_shot={few_shot}...")
         print(f"{'='*50}\n")
 
         try:
-            subprocess.run(cmd, env=env, check=True)
+            subprocess.run(cmd, env=env, check=True, cwd=PATCHCORE_ROOT)
         except subprocess.CalledProcessError as e:
             print(f"Error running command for {target_class} ({few_shot}-shot): {e}")

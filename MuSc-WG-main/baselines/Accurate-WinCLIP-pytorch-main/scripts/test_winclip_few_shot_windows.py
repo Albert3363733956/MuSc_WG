@@ -8,17 +8,19 @@ device = "0"
 data_root_mvtec = r"C:\Users\Administrator\Desktop\dataset\MVTec"
 data_root_btad = r"C:\Users\Administrator\Desktop\dataset\BTech_Dataset_transformed"
 data_root_mvtec_loco = r"C:\Users\Administrator\Desktop\dataset\MVTec_loco"
-data_root_microled = r"C:\Users\Administrator\Desktop\dataset\LED\microled_AD"
-data_root_miniled = r"C:\Users\Administrator\Desktop\dataset\LED\miniled_AD"
+data_root_microled = r"C:\Users\Administrator\Desktop\dataset\LED2\microled_AD"
+data_root_miniled = r"C:\Users\Administrator\Desktop\dataset\LED2\miniled_AD"
+data_root_hhled = r"C:\Users\Administrator\Desktop\dataset\LED2\hhled_AD"
 
 # Define test configurations
 # Uncomment the configuration you want to run
 test_configs = [
     # {"dataset": "mvtec", "path": data_root_mvtec, "class_name": "all"},
     # {"dataset": "btad", "path": data_root_btad, "class_name": "all"},
-    {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all"},
+    # {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "class_name": "all"},
     # {"dataset": "microled", "path": data_root_microled, "class_name": "all"},
     # {"dataset": "miniled", "path": data_root_miniled, "class_name": "all"},
+    {"dataset": "hhled", "path": data_root_hhled, "class_name": "all"},
 ]
 
 few_shots = [4]  # Define the number of few-shots to evaluate

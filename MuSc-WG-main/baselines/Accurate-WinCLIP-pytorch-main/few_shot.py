@@ -24,14 +24,27 @@ def memory(model, obj_list, dataset_dir, save_path, preprocess, transform, k_sho
            dataset_name, device):
     normal_features_ls = {}
     mid_memory, large_memory, patch_memory = initialize_memory(obj_list)
+    dataset_name = normalize_dataset_name(dataset_name)
     for i in range(len(obj_list)):
-        if dataset_name in ['mvtec', 'microled', 'miniled', 'btad', 'mvtec_loco']:
+        if dataset_name in ['mvtec', 'btad', 'mvtec_loco']:
             normal_data = MVTecDataset(root=dataset_dir, transform=preprocess, target_transform=transform,
                                        aug_rate=-1, mode='train', k_shot=k_shot, save_dir=save_path,
-                                       obj_name=obj_list[i])
+                                       obj_name=obj_list[i], class_names=obj_list)
+        elif dataset_name in ['microled', 'miniled', 'hhled']:
+            if has_meta(dataset_dir):
+                normal_data = MVTecDataset(root=dataset_dir, transform=preprocess, target_transform=transform,
+                                           aug_rate=-1, mode='train', k_shot=k_shot, save_dir=save_path,
+                                           obj_name=obj_list[i], class_names=obj_list)
+            else:
+                normal_data = FolderAnomalyDataset(root=dataset_dir, transform=preprocess, target_transform=transform,
+                                                   mode='train', k_shot=k_shot, save_dir=save_path,
+                                                   obj_name=obj_list[i], class_names=obj_list,
+                                                   dataset_name=dataset_name)
         elif dataset_name == 'visa':
             normal_data = VisaDataset(root=dataset_dir, transform=preprocess, target_transform=transform,
                                       mode='train', k_shot=k_shot, save_dir=save_path, obj_name=obj_list[i])
+        else:
+            raise ValueError(f"Unsupported dataset: {dataset_name}")
 
         normal_dataloader = torch.utils.data.DataLoader(normal_data, batch_size=1, shuffle=False)
         for index, items in enumerate(normal_dataloader):

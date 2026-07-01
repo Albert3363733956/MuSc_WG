@@ -4,21 +4,32 @@ import sys
 
 # Configuration
 device = "0"
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+
+
+def resolve_from_project(path):
+    if os.path.isabs(path):
+        return path
+    return os.path.normpath(os.path.join(project_root, path))
+
+
 # Path to datasets
-data_root_mvtec = "../../data/mvtec_anomaly_detection"
+data_root_mvtec = r"C:\Users\Administrator\Desktop\dataset\MVTec"
 data_root_btad = r"C:\Users\Administrator\Desktop\dataset\BTech_Dataset_transformed"
 data_root_mvtec_loco = r"C:\Users\Administrator\Desktop\dataset\MVTec_loco"
-data_root_microled = "../../data/microled_AD"
-data_root_miniled = "../../data/miniled_AD"
+data_root_microled = r"C:\Users\Administrator\Desktop\dataset\LED2\microled_AD"
+data_root_miniled = r"C:\Users\Administrator\Desktop\dataset\LED2\miniled_AD"
+data_root_hhled = r"C:\Users\Administrator\Desktop\dataset\LED2\hhled_AD"
 
 # Define test configurations
 # Uncomment the configuration you want to run
 test_configs = [
-    # {"dataset": "mvtec", "path": data_root_mvtec, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"}, 
+    # {"dataset": "mvtec", "path": data_root_mvtec, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
     # {"dataset": "btad", "path": data_root_btad, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
-    {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
+    # {"dataset": "mvtec_loco", "path": data_root_mvtec_loco, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
     # {"dataset": "microled", "path": data_root_microled, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
     # {"dataset": "miniled", "path": data_root_miniled, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
+    {"dataset": "hhled", "path": data_root_hhled, "checkpoint": "./exps/pretrained/visa_pretrained.pth", "class_name": "all"},
 ]
 
 # Base arguments
@@ -31,7 +42,7 @@ mode = "zero_shot"
 
 for config in test_configs:
     test_dataset = config["dataset"]
-    data_root = config["path"]
+    data_root = resolve_from_project(config["path"])
     checkpoint_path = config["checkpoint"]
     class_name = config.get("class_name", "all")
 
@@ -41,7 +52,7 @@ for config in test_configs:
         continue
 
     # Paths
-    save_dir = f"../../output/VAND-APRIL-GAN-master/{test_dataset}/zero_shot"
+    save_dir = resolve_from_project(f"../../output/VAND-APRIL-GAN-master/{test_dataset}/zero_shot")
     
     # Ensure save directory exists
     os.makedirs(save_dir, exist_ok=True)
@@ -70,6 +81,6 @@ for config in test_configs:
     print(f"Running zero-shot test for dataset={test_dataset}...")
     
     try:
-        subprocess.run(cmd, env=env, check=True)
+        subprocess.run(cmd, env=env, cwd=project_root, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error running command: {e}")

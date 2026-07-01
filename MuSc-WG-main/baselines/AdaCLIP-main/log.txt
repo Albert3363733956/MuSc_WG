@@ -575,3 +575,341 @@
 26-04-04 12:56:18.698 - INFO:            wood 		I-Auroc:99.12 	I-F1:97.48 	I-AP:99.73 	P-Auroc:92.58 	P-F1:55.98 	P-AP:56.40
 26-04-04 12:56:18.700 - INFO:          zipper 		I-Auroc:98.99 	I-F1:97.50 	I-AP:99.74 	P-Auroc:95.80 	P-F1:57.24 	P-AP:54.63
 26-04-04 12:56:18.701 - INFO:         Average 		I-Auroc:89.99 	I-F1:92.30 	I-AP:95.68 	P-Auroc:89.90 	P-F1:43.95 	P-AP:41.59
+26-06-04 21:57:53.558 - INFO: batch_size = 1
+26-06-04 21:57:53.560 - INFO: ckt_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\baselines\AdaCLIP-main\weights\pretrained_visa_clinicdb.pth
+26-06-04 21:57:53.561 - INFO: class_name = candle
+26-06-04 21:57:53.562 - INFO: data_root = C:\Users\Administrator\Desktop\dataset\BTech_Dataset_transformed
+26-06-04 21:57:53.564 - INFO: image_path = asset/img.png
+26-06-04 21:57:53.565 - INFO: image_size = 518
+26-06-04 21:57:53.566 - INFO: k_clusters = 20
+26-06-04 21:57:53.566 - INFO: model = ViT-L-14-336
+26-06-04 21:57:53.567 - INFO: obj_name = all
+26-06-04 21:57:53.567 - INFO: prompting_branch = VL
+26-06-04 21:57:53.567 - INFO: prompting_depth = 4
+26-06-04 21:57:53.569 - INFO: prompting_length = 5
+26-06-04 21:57:53.569 - INFO: prompting_type = SD
+26-06-04 21:57:53.570 - INFO: save_fig = True
+26-06-04 21:57:53.571 - INFO: save_name = test.png
+26-06-04 21:57:53.572 - INFO: save_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\output\AdaCLIP\btad\zero_shot_all
+26-06-04 21:57:53.572 - INFO: testing_data = btad
+26-06-04 21:57:53.573 - INFO: testing_model = dataset
+26-06-04 21:57:53.574 - INFO: use_hsf = True
+26-06-04 22:05:39.565 - INFO: AdaCLIP: 611.82ms per image
+26-06-04 22:05:39.568 - INFO: AdaCLIP GPU Memory: 2699.38 MB (Allocated), 2876.00 MB (Reserved)
+26-06-04 22:05:39.569 - INFO:              01 		I-Auroc:88.97 	I-F1:88.89 	I-AP:95.54 	P-Auroc:90.31 	P-F1:52.86 	P-AP:50.34
+26-06-04 22:05:40.279 - INFO:              02 		I-Auroc:83.18 	I-F1:93.02 	I-AP:97.25 	P-Auroc:84.45 	P-F1:46.80 	P-AP:41.21
+26-06-04 22:05:40.280 - INFO:              03 		I-Auroc:96.42 	I-F1:71.79 	I-AP:76.49 	P-Auroc:95.95 	P-F1:22.25 	P-AP:12.81
+26-06-04 22:05:40.282 - INFO:         Average 		I-Auroc:89.52 	I-F1:84.57 	I-AP:89.76 	P-Auroc:90.24 	P-F1:40.63 	P-AP:34.78
+26-06-04 22:05:48.558 - INFO: batch_size = 1
+26-06-04 22:05:48.559 - INFO: ckt_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\baselines\AdaCLIP-main\weights\pretrained_visa_clinicdb.pth
+26-06-04 22:05:48.561 - INFO: class_name = candle
+26-06-04 22:05:48.562 - INFO: data_root = C:\Users\Administrator\Desktop\dataset\MVTec_loco
+26-06-04 22:05:48.563 - INFO: image_path = asset/img.png
+26-06-04 22:05:48.565 - INFO: image_size = 518
+26-06-04 22:05:48.566 - INFO: k_clusters = 20
+26-06-04 22:05:48.567 - INFO: model = ViT-L-14-336
+26-06-04 22:05:48.568 - INFO: obj_name = all
+26-06-04 22:05:48.570 - INFO: prompting_branch = VL
+26-06-04 22:05:48.571 - INFO: prompting_depth = 4
+26-06-04 22:05:48.572 - INFO: prompting_length = 5
+26-06-04 22:05:48.574 - INFO: prompting_type = SD
+26-06-04 22:05:48.575 - INFO: save_fig = True
+26-06-04 22:05:48.576 - INFO: save_name = test.png
+26-06-04 22:05:48.578 - INFO: save_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\output\AdaCLIP\mvtec_loco\zero_shot_all
+26-06-04 22:05:48.580 - INFO: testing_data = mvtec_loco
+26-06-04 22:05:48.581 - INFO: testing_model = dataset
+26-06-04 22:05:48.583 - INFO: use_hsf = True
+26-06-04 22:24:23.405 - INFO: AdaCLIP: 703.75ms per image
+26-06-04 22:24:24.110 - INFO: AdaCLIP GPU Memory: 2699.39 MB (Allocated), 2876.00 MB (Reserved)
+26-06-04 22:24:24.110 - INFO:   breakfast_box 		I-Auroc:53.91 	I-F1:77.23 	I-AP:72.89 	P-Auroc:61.25 	P-F1:17.24 	P-AP:9.69
+26-06-04 22:24:24.111 - INFO:    juice_bottle 		I-Auroc:70.81 	I-F1:84.81 	I-AP:85.74 	P-Auroc:73.66 	P-F1:23.03 	P-AP:15.81
+26-06-04 22:24:24.113 - INFO:        pushpins 		I-Auroc:57.23 	I-F1:71.37 	I-AP:68.66 	P-Auroc:49.80 	P-F1:3.03 	P-AP:1.46
+26-06-04 22:24:24.114 - INFO:       screw_bag 		I-Auroc:57.73 	I-F1:78.35 	I-AP:74.16 	P-Auroc:68.43 	P-F1:12.18 	P-AP:7.14
+26-06-04 22:24:24.115 - INFO: splicing_connectors 		I-Auroc:58.98 	I-F1:76.44 	I-AP:72.96 	P-Auroc:52.14 	P-F1:15.62 	P-AP:10.40
+26-06-04 22:24:24.116 - INFO:         Average 		I-Auroc:59.73 	I-F1:77.64 	I-AP:74.88 	P-Auroc:61.06 	P-F1:14.22 	P-AP:8.90
+26-06-10 11:48:44.038 - INFO: batch_size = 1
+26-06-10 11:48:44.039 - INFO: ckt_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\baselines\AdaCLIP-main\weights\pretrained_visa_clinicdb.pth
+26-06-10 11:48:44.040 - INFO: class_name = candle
+26-06-10 11:48:44.041 - INFO: data_root = C:\Users\Administrator\Desktop\dataset\BTech_Dataset_transformed
+26-06-10 11:48:44.042 - INFO: image_path = asset/img.png
+26-06-10 11:48:44.042 - INFO: image_size = 518
+26-06-10 11:48:44.043 - INFO: k_clusters = 20
+26-06-10 11:48:44.044 - INFO: model = ViT-L-14-336
+26-06-10 11:48:44.044 - INFO: obj_name = all
+26-06-10 11:48:44.045 - INFO: prompting_branch = VL
+26-06-10 11:48:44.046 - INFO: prompting_depth = 4
+26-06-10 11:48:44.046 - INFO: prompting_length = 5
+26-06-10 11:48:44.047 - INFO: prompting_type = SD
+26-06-10 11:48:44.048 - INFO: save_fig = True
+26-06-10 11:48:44.049 - INFO: save_name = test.png
+26-06-10 11:48:44.050 - INFO: save_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\output\AdaCLIP\btad\zero_shot_all
+26-06-10 11:48:44.051 - INFO: testing_data = btad
+26-06-10 11:48:44.053 - INFO: testing_model = dataset
+26-06-10 11:48:44.055 - INFO: use_hsf = True
+26-06-10 11:56:22.016 - INFO: AdaCLIP: 601.75ms per image
+26-06-10 11:56:22.019 - INFO: AdaCLIP GPU Memory: 2699.38 MB (Allocated), 2876.00 MB (Reserved)
+26-06-10 11:56:22.021 - INFO:              01 		I-Auroc:88.97 	I-F1:88.89 	I-AP:95.54 	P-Auroc:90.31 	P-F1:52.86 	P-AP:50.34
+26-06-10 11:56:22.720 - INFO:              02 		I-Auroc:83.18 	I-F1:93.02 	I-AP:97.25 	P-Auroc:84.45 	P-F1:46.80 	P-AP:41.21
+26-06-10 11:56:22.721 - INFO:              03 		I-Auroc:96.42 	I-F1:71.79 	I-AP:76.49 	P-Auroc:95.95 	P-F1:22.25 	P-AP:12.81
+26-06-10 11:56:22.723 - INFO:         Average 		I-Auroc:89.52 	I-F1:84.57 	I-AP:89.76 	P-Auroc:90.24 	P-F1:40.63 	P-AP:34.78
+26-06-10 11:56:31.152 - INFO: batch_size = 1
+26-06-10 11:56:31.154 - INFO: ckt_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\baselines\AdaCLIP-main\weights\pretrained_visa_clinicdb.pth
+26-06-10 11:56:31.156 - INFO: class_name = candle
+26-06-10 11:56:31.157 - INFO: data_root = C:\Users\Administrator\Desktop\dataset\MVTec_loco
+26-06-10 11:56:31.158 - INFO: image_path = asset/img.png
+26-06-10 11:56:31.160 - INFO: image_size = 518
+26-06-10 11:56:31.161 - INFO: k_clusters = 20
+26-06-10 11:56:31.162 - INFO: model = ViT-L-14-336
+26-06-10 11:56:31.163 - INFO: obj_name = all
+26-06-10 11:56:31.165 - INFO: prompting_branch = VL
+26-06-10 11:56:31.166 - INFO: prompting_depth = 4
+26-06-10 11:56:31.167 - INFO: prompting_length = 5
+26-06-10 11:56:31.168 - INFO: prompting_type = SD
+26-06-10 11:56:31.170 - INFO: save_fig = True
+26-06-10 11:56:31.171 - INFO: save_name = test.png
+26-06-10 11:56:31.172 - INFO: save_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\output\AdaCLIP\mvtec_loco\zero_shot_all
+26-06-10 11:56:31.174 - INFO: testing_data = mvtec_loco
+26-06-10 11:56:31.175 - INFO: testing_model = dataset
+26-06-10 11:56:31.176 - INFO: use_hsf = True
+26-06-10 12:05:30.755 - INFO: batch_size = 1
+26-06-10 12:05:30.757 - INFO: ckt_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\baselines\AdaCLIP-main\weights\pretrained_visa_clinicdb.pth
+26-06-10 12:05:30.758 - INFO: class_name = candle
+26-06-10 12:05:30.760 - INFO: data_root = C:\Users\Administrator\Desktop\dataset\MVTec
+26-06-10 12:05:30.761 - INFO: image_path = asset/img.png
+26-06-10 12:05:30.762 - INFO: image_size = 518
+26-06-10 12:05:30.764 - INFO: k_clusters = 20
+26-06-10 12:05:30.765 - INFO: model = ViT-L-14-336
+26-06-10 12:05:30.766 - INFO: obj_name = all
+26-06-10 12:05:30.767 - INFO: prompting_branch = VL
+26-06-10 12:05:30.768 - INFO: prompting_depth = 4
+26-06-10 12:05:30.770 - INFO: prompting_length = 5
+26-06-10 12:05:30.771 - INFO: prompting_type = SD
+26-06-10 12:05:30.773 - INFO: save_fig = True
+26-06-10 12:05:30.792 - INFO: save_name = test.png
+26-06-10 12:05:30.793 - INFO: save_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\output\AdaCLIP\mvtec\zero_shot_all
+26-06-10 12:05:30.795 - INFO: testing_data = mvtec
+26-06-10 12:05:30.796 - INFO: testing_model = dataset
+26-06-10 12:05:30.798 - INFO: use_hsf = True
+26-06-10 12:23:43.089 - INFO: AdaCLIP: 626.54ms per image
+26-06-10 12:23:43.101 - INFO: AdaCLIP GPU Memory: 2699.45 MB (Allocated), 2876.00 MB (Reserved)
+26-06-10 12:23:43.103 - INFO:          bottle 		I-Auroc:98.17 	I-F1:96.06 	I-AP:99.45 	P-Auroc:90.79 	P-F1:60.80 	P-AP:62.49
+26-06-10 12:23:43.104 - INFO:           cable 		I-Auroc:64.36 	I-F1:76.03 	I-AP:79.34 	P-Auroc:78.27 	P-F1:26.54 	P-AP:20.21
+26-06-10 12:23:43.105 - INFO:         capsule 		I-Auroc:84.04 	I-F1:91.91 	I-AP:96.46 	P-Auroc:95.21 	P-F1:35.91 	P-AP:30.74
+26-06-10 12:23:43.107 - INFO:          carpet 		I-Auroc:100.00 	I-F1:100.00 	I-AP:100.00 	P-Auroc:98.92 	P-F1:67.36 	P-AP:70.93
+26-06-10 12:23:43.108 - INFO:            grid 		I-Auroc:97.41 	I-F1:97.44 	I-AP:99.00 	P-Auroc:97.04 	P-F1:39.02 	P-AP:34.22
+26-06-10 12:23:43.109 - INFO:        hazelnut 		I-Auroc:86.89 	I-F1:85.31 	I-AP:92.84 	P-Auroc:96.54 	P-F1:42.12 	P-AP:42.54
+26-06-10 12:23:43.111 - INFO:         leather 		I-Auroc:99.86 	I-F1:99.46 	I-AP:99.95 	P-Auroc:99.29 	P-F1:47.71 	P-AP:50.97
+26-06-10 12:23:43.112 - INFO:       metal_nut 		I-Auroc:66.67 	I-F1:89.42 	I-AP:92.16 	P-Auroc:74.44 	P-F1:35.28 	P-AP:24.47
+26-06-10 12:23:43.113 - INFO:            pill 		I-Auroc:89.13 	I-F1:94.31 	I-AP:97.55 	P-Auroc:87.72 	P-F1:35.68 	P-AP:32.19
+26-06-10 12:23:43.115 - INFO:           screw 		I-Auroc:87.58 	I-F1:90.53 	I-AP:94.57 	P-Auroc:98.25 	P-F1:38.50 	P-AP:34.66
+26-06-10 12:23:43.116 - INFO:            tile 		I-Auroc:99.93 	I-F1:99.40 	I-AP:99.97 	P-Auroc:91.13 	P-F1:61.88 	P-AP:63.88
+26-06-10 12:23:43.117 - INFO:      toothbrush 		I-Auroc:90.83 	I-F1:89.66 	I-AP:96.83 	P-Auroc:94.71 	P-F1:37.88 	P-AP:34.64
+26-06-10 12:23:43.119 - INFO:      transistor 		I-Auroc:86.83 	I-F1:80.00 	I-AP:87.60 	P-Auroc:57.83 	P-F1:17.35 	P-AP:10.92
+26-06-10 12:23:43.121 - INFO:            wood 		I-Auroc:99.12 	I-F1:97.48 	I-AP:99.73 	P-Auroc:92.58 	P-F1:55.98 	P-AP:56.40
+26-06-10 12:23:43.122 - INFO:          zipper 		I-Auroc:98.99 	I-F1:97.50 	I-AP:99.74 	P-Auroc:95.80 	P-F1:57.24 	P-AP:54.63
+26-06-10 12:23:43.123 - INFO:         Average 		I-Auroc:89.99 	I-F1:92.30 	I-AP:95.68 	P-Auroc:89.90 	P-F1:43.95 	P-AP:41.59
+26-06-10 12:23:53.013 - INFO: batch_size = 1
+26-06-10 12:23:53.015 - INFO: ckt_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\baselines\AdaCLIP-main\weights\pretrained_visa_clinicdb.pth
+26-06-10 12:23:53.016 - INFO: class_name = candle
+26-06-10 12:23:53.018 - INFO: data_root = C:\Users\Administrator\Desktop\dataset\LED2\hhled_AD
+26-06-10 12:23:53.019 - INFO: image_path = asset/img.png
+26-06-10 12:23:53.021 - INFO: image_size = 518
+26-06-10 12:23:53.022 - INFO: k_clusters = 20
+26-06-10 12:23:53.023 - INFO: model = ViT-L-14-336
+26-06-10 12:23:53.024 - INFO: obj_name = all
+26-06-10 12:23:53.025 - INFO: prompting_branch = VL
+26-06-10 12:23:53.027 - INFO: prompting_depth = 4
+26-06-10 12:23:53.028 - INFO: prompting_length = 5
+26-06-10 12:23:53.030 - INFO: prompting_type = SD
+26-06-10 12:23:53.031 - INFO: save_fig = True
+26-06-10 12:23:53.033 - INFO: save_name = test.png
+26-06-10 12:23:53.034 - INFO: save_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\output\AdaCLIP\hhled\zero_shot_all
+26-06-10 12:23:53.035 - INFO: testing_data = hhled
+26-06-10 12:23:53.037 - INFO: testing_model = dataset
+26-06-10 12:23:53.038 - INFO: use_hsf = True
+26-06-10 21:38:17.216 - INFO: batch_size = 1
+26-06-10 21:38:17.217 - INFO: ckt_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\baselines\AdaCLIP-main\weights\pretrained_visa_clinicdb.pth
+26-06-10 21:38:17.219 - INFO: class_name = candle
+26-06-10 21:38:17.220 - INFO: data_root = C:\Users\Administrator\Desktop\dataset\MVTec
+26-06-10 21:38:17.221 - INFO: image_path = asset/img.png
+26-06-10 21:38:17.222 - INFO: image_size = 518
+26-06-10 21:38:17.224 - INFO: k_clusters = 20
+26-06-10 21:38:17.224 - INFO: model = ViT-L-14-336
+26-06-10 21:38:17.225 - INFO: obj_name = all
+26-06-10 21:38:17.225 - INFO: prompting_branch = VL
+26-06-10 21:38:17.226 - INFO: prompting_depth = 4
+26-06-10 21:38:17.227 - INFO: prompting_length = 5
+26-06-10 21:38:17.228 - INFO: prompting_type = SD
+26-06-10 21:38:17.228 - INFO: save_fig = True
+26-06-10 21:38:17.229 - INFO: save_name = test.png
+26-06-10 21:38:17.230 - INFO: save_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\output\AdaCLIP\mvtec\zero_shot_all
+26-06-10 21:38:17.230 - INFO: testing_data = mvtec
+26-06-10 21:38:17.231 - INFO: testing_model = dataset
+26-06-10 21:38:17.232 - INFO: use_hsf = True
+26-06-10 21:57:14.714 - INFO: AdaCLIP: 651.87ms per image
+26-06-10 21:57:14.717 - INFO: AdaCLIP GPU Memory: 2699.45 MB (Allocated), 2876.00 MB (Reserved)
+26-06-10 21:57:14.717 - INFO:          bottle 		I-Auroc:98.17 	I-F1:96.06 	I-AP:99.45 	P-Auroc:90.79 	P-F1:60.80 	P-AP:62.49
+26-06-10 21:57:14.718 - INFO:           cable 		I-Auroc:64.36 	I-F1:76.03 	I-AP:79.34 	P-Auroc:78.27 	P-F1:26.54 	P-AP:20.21
+26-06-10 21:57:14.720 - INFO:         capsule 		I-Auroc:84.04 	I-F1:91.91 	I-AP:96.46 	P-Auroc:95.21 	P-F1:35.91 	P-AP:30.74
+26-06-10 21:57:14.721 - INFO:          carpet 		I-Auroc:100.00 	I-F1:100.00 	I-AP:100.00 	P-Auroc:98.92 	P-F1:67.36 	P-AP:70.93
+26-06-10 21:57:14.723 - INFO:            grid 		I-Auroc:97.41 	I-F1:97.44 	I-AP:99.00 	P-Auroc:97.04 	P-F1:39.02 	P-AP:34.22
+26-06-10 21:57:14.724 - INFO:        hazelnut 		I-Auroc:86.89 	I-F1:85.31 	I-AP:92.84 	P-Auroc:96.54 	P-F1:42.12 	P-AP:42.54
+26-06-10 21:57:14.725 - INFO:         leather 		I-Auroc:99.86 	I-F1:99.46 	I-AP:99.95 	P-Auroc:99.29 	P-F1:47.71 	P-AP:50.97
+26-06-10 21:57:14.727 - INFO:       metal_nut 		I-Auroc:66.67 	I-F1:89.42 	I-AP:92.16 	P-Auroc:74.44 	P-F1:35.28 	P-AP:24.47
+26-06-10 21:57:14.728 - INFO:            pill 		I-Auroc:89.13 	I-F1:94.31 	I-AP:97.55 	P-Auroc:87.72 	P-F1:35.68 	P-AP:32.19
+26-06-10 21:57:14.729 - INFO:           screw 		I-Auroc:87.58 	I-F1:90.53 	I-AP:94.57 	P-Auroc:98.25 	P-F1:38.50 	P-AP:34.66
+26-06-10 21:57:14.731 - INFO:            tile 		I-Auroc:99.93 	I-F1:99.40 	I-AP:99.97 	P-Auroc:91.13 	P-F1:61.88 	P-AP:63.88
+26-06-10 21:57:14.732 - INFO:      toothbrush 		I-Auroc:90.83 	I-F1:89.66 	I-AP:96.83 	P-Auroc:94.71 	P-F1:37.88 	P-AP:34.64
+26-06-10 21:57:14.733 - INFO:      transistor 		I-Auroc:86.83 	I-F1:80.00 	I-AP:87.60 	P-Auroc:57.83 	P-F1:17.35 	P-AP:10.92
+26-06-10 21:57:14.735 - INFO:            wood 		I-Auroc:99.12 	I-F1:97.48 	I-AP:99.73 	P-Auroc:92.58 	P-F1:55.98 	P-AP:56.40
+26-06-10 21:57:14.736 - INFO:          zipper 		I-Auroc:98.99 	I-F1:97.50 	I-AP:99.74 	P-Auroc:95.80 	P-F1:57.24 	P-AP:54.63
+26-06-10 21:57:14.737 - INFO:         Average 		I-Auroc:89.99 	I-F1:92.30 	I-AP:95.68 	P-Auroc:89.90 	P-F1:43.95 	P-AP:41.59
+26-06-10 21:57:28.516 - INFO: batch_size = 1
+26-06-10 21:57:28.517 - INFO: ckt_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\baselines\AdaCLIP-main\weights\pretrained_visa_clinicdb.pth
+26-06-10 21:57:28.518 - INFO: class_name = candle
+26-06-10 21:57:28.519 - INFO: data_root = C:\Users\Administrator\Desktop\dataset\LED2\hhled_AD
+26-06-10 21:57:28.519 - INFO: image_path = asset/img.png
+26-06-10 21:57:28.520 - INFO: image_size = 518
+26-06-10 21:57:28.521 - INFO: k_clusters = 20
+26-06-10 21:57:28.522 - INFO: model = ViT-L-14-336
+26-06-10 21:57:28.523 - INFO: obj_name = all
+26-06-10 21:57:28.524 - INFO: prompting_branch = VL
+26-06-10 21:57:28.525 - INFO: prompting_depth = 4
+26-06-10 21:57:28.525 - INFO: prompting_length = 5
+26-06-10 21:57:28.526 - INFO: prompting_type = SD
+26-06-10 21:57:28.527 - INFO: save_fig = True
+26-06-10 21:57:28.528 - INFO: save_name = test.png
+26-06-10 21:57:28.528 - INFO: save_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\output\AdaCLIP\hhled\zero_shot_all
+26-06-10 21:57:28.529 - INFO: testing_data = hhled
+26-06-10 21:57:28.530 - INFO: testing_model = dataset
+26-06-10 21:57:28.531 - INFO: use_hsf = True
+26-06-10 22:22:02.514 - INFO: batch_size = 1
+26-06-10 22:22:02.515 - INFO: ckt_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\baselines\AdaCLIP-main\weights\pretrained_visa_clinicdb.pth
+26-06-10 22:22:02.516 - INFO: class_name = candle
+26-06-10 22:22:02.517 - INFO: data_root = C:\Users\Administrator\Desktop\dataset\LED2\microled_AD
+26-06-10 22:22:02.518 - INFO: image_path = asset/img.png
+26-06-10 22:22:02.519 - INFO: image_size = 518
+26-06-10 22:22:02.520 - INFO: k_clusters = 20
+26-06-10 22:22:02.521 - INFO: model = ViT-L-14-336
+26-06-10 22:22:02.522 - INFO: obj_name = all
+26-06-10 22:22:02.523 - INFO: prompting_branch = VL
+26-06-10 22:22:02.524 - INFO: prompting_depth = 4
+26-06-10 22:22:02.524 - INFO: prompting_length = 5
+26-06-10 22:22:02.525 - INFO: prompting_type = SD
+26-06-10 22:22:02.526 - INFO: save_fig = True
+26-06-10 22:22:02.528 - INFO: save_name = test.png
+26-06-10 22:22:02.529 - INFO: save_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\output\AdaCLIP\microled\zero_shot_all
+26-06-10 22:22:02.529 - INFO: testing_data = microled
+26-06-10 22:22:02.530 - INFO: testing_model = dataset
+26-06-10 22:22:02.531 - INFO: use_hsf = True
+26-06-10 22:47:44.032 - INFO: AdaCLIP: 575.60ms per image
+26-06-10 22:47:44.762 - INFO: AdaCLIP GPU Memory: 2699.48 MB (Allocated), 2876.00 MB (Reserved)
+26-06-10 22:47:44.763 - INFO: microled_TypeA_1 		I-Auroc:79.43 	I-F1:70.21 	I-AP:78.73 	P-Auroc:92.95 	P-F1:30.56 	P-AP:27.30
+26-06-10 22:47:44.765 - INFO: microled_TypeA_2 		I-Auroc:66.90 	I-F1:63.47 	I-AP:61.23 	P-Auroc:81.56 	P-F1:8.17 	P-AP:4.00
+26-06-10 22:47:44.766 - INFO: microled_TypeA_3 		I-Auroc:66.52 	I-F1:60.69 	I-AP:62.18 	P-Auroc:80.90 	P-F1:9.28 	P-AP:2.54
+26-06-10 22:47:44.768 - INFO: microled_TypeA_4 		I-Auroc:75.63 	I-F1:66.67 	I-AP:73.01 	P-Auroc:84.71 	P-F1:16.36 	P-AP:11.95
+26-06-10 22:47:44.769 - INFO: microled_TypeA_5 		I-Auroc:63.63 	I-F1:59.52 	I-AP:59.20 	P-Auroc:73.75 	P-F1:9.97 	P-AP:6.36
+26-06-10 22:47:44.770 - INFO: microled_TypeA_6 		I-Auroc:65.54 	I-F1:60.93 	I-AP:58.54 	P-Auroc:73.49 	P-F1:8.12 	P-AP:4.41
+26-06-10 22:47:44.772 - INFO: microled_TypeA_7 		I-Auroc:67.98 	I-F1:63.86 	I-AP:62.08 	P-Auroc:90.90 	P-F1:27.63 	P-AP:23.84
+26-06-10 22:47:44.773 - INFO: microled_TypeA_8 		I-Auroc:59.13 	I-F1:62.28 	I-AP:50.32 	P-Auroc:85.73 	P-F1:14.97 	P-AP:11.45
+26-06-10 22:47:44.774 - INFO: microled_TypeA_9 		I-Auroc:82.12 	I-F1:69.72 	I-AP:77.88 	P-Auroc:77.11 	P-F1:11.94 	P-AP:7.07
+26-06-10 22:47:44.776 - INFO: microled_TypeA_10 		I-Auroc:56.16 	I-F1:58.33 	I-AP:51.89 	P-Auroc:77.44 	P-F1:6.40 	P-AP:2.43
+26-06-10 22:47:44.778 - INFO: microled_TypeA_11 		I-Auroc:64.61 	I-F1:60.00 	I-AP:60.55 	P-Auroc:83.53 	P-F1:15.46 	P-AP:9.80
+26-06-10 22:47:44.779 - INFO: microled_TypeA_12 		I-Auroc:61.64 	I-F1:59.77 	I-AP:55.36 	P-Auroc:83.28 	P-F1:10.29 	P-AP:6.74
+26-06-10 22:47:44.780 - INFO: microled_TypeA_13 		I-Auroc:70.57 	I-F1:64.06 	I-AP:65.00 	P-Auroc:62.53 	P-F1:4.22 	P-AP:1.54
+26-06-10 22:47:44.782 - INFO: microled_TypeA_14 		I-Auroc:58.56 	I-F1:59.09 	I-AP:52.85 	P-Auroc:70.96 	P-F1:7.60 	P-AP:2.73
+26-06-10 22:47:44.783 - INFO: microled_TypeA_15 		I-Auroc:56.20 	I-F1:60.71 	I-AP:49.29 	P-Auroc:75.76 	P-F1:6.09 	P-AP:2.58
+26-06-10 22:47:44.784 - INFO: microled_TypeA_16 		I-Auroc:51.20 	I-F1:59.55 	I-AP:45.46 	P-Auroc:86.81 	P-F1:13.21 	P-AP:7.72
+26-06-10 22:47:44.785 - INFO: microled_TypeA_17 		I-Auroc:67.68 	I-F1:61.11 	I-AP:61.90 	P-Auroc:85.24 	P-F1:18.71 	P-AP:12.22
+26-06-10 22:47:44.787 - INFO: microled_TypeA_18 		I-Auroc:78.68 	I-F1:67.67 	I-AP:73.21 	P-Auroc:72.32 	P-F1:9.52 	P-AP:5.63
+26-06-10 22:47:44.788 - INFO: microled_TypeA_19 		I-Auroc:64.78 	I-F1:61.94 	I-AP:56.43 	P-Auroc:84.48 	P-F1:14.89 	P-AP:7.67
+26-06-10 22:47:44.789 - INFO: microled_TypeA_20 		I-Auroc:82.32 	I-F1:71.19 	I-AP:77.45 	P-Auroc:84.21 	P-F1:17.55 	P-AP:12.69
+26-06-10 22:47:44.791 - INFO:         Average 		I-Auroc:66.96 	I-F1:63.04 	I-AP:61.63 	P-Auroc:80.38 	P-F1:13.05 	P-AP:8.53
+26-06-10 22:47:58.307 - INFO: batch_size = 1
+26-06-10 22:47:58.308 - INFO: ckt_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\baselines\AdaCLIP-main\weights\pretrained_visa_clinicdb.pth
+26-06-10 22:47:58.309 - INFO: class_name = candle
+26-06-10 22:47:58.310 - INFO: data_root = C:\Users\Administrator\Desktop\dataset\LED2\miniled_AD
+26-06-10 22:47:58.311 - INFO: image_path = asset/img.png
+26-06-10 22:47:58.312 - INFO: image_size = 518
+26-06-10 22:47:58.313 - INFO: k_clusters = 20
+26-06-10 22:47:58.313 - INFO: model = ViT-L-14-336
+26-06-10 22:47:58.314 - INFO: obj_name = all
+26-06-10 22:47:58.315 - INFO: prompting_branch = VL
+26-06-10 22:47:58.316 - INFO: prompting_depth = 4
+26-06-10 22:47:58.317 - INFO: prompting_length = 5
+26-06-10 22:47:58.318 - INFO: prompting_type = SD
+26-06-10 22:47:58.319 - INFO: save_fig = True
+26-06-10 22:47:58.320 - INFO: save_name = test.png
+26-06-10 22:47:58.321 - INFO: save_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\output\AdaCLIP\miniled\zero_shot_all
+26-06-10 22:47:58.322 - INFO: testing_data = miniled
+26-06-10 22:47:58.322 - INFO: testing_model = dataset
+26-06-10 22:47:58.324 - INFO: use_hsf = True
+26-06-10 22:53:20.047 - INFO: AdaCLIP: 573.29ms per image
+26-06-10 22:53:20.048 - INFO: AdaCLIP GPU Memory: 2699.39 MB (Allocated), 2876.00 MB (Reserved)
+26-06-10 22:53:20.049 - INFO: miniled_TypeA_1 		I-Auroc:77.08 	I-F1:67.89 	I-AP:68.43 	P-Auroc:92.41 	P-F1:38.61 	P-AP:31.57
+26-06-10 22:53:20.050 - INFO: miniled_TypeA_2 		I-Auroc:75.20 	I-F1:65.15 	I-AP:72.36 	P-Auroc:86.08 	P-F1:29.88 	P-AP:25.57
+26-06-10 22:53:20.051 - INFO: miniled_TypeB_1 		I-Auroc:87.57 	I-F1:76.42 	I-AP:84.60 	P-Auroc:90.12 	P-F1:26.02 	P-AP:22.58
+26-06-10 22:53:20.053 - INFO: miniled_TypeB_2 		I-Auroc:83.89 	I-F1:76.92 	I-AP:83.16 	P-Auroc:90.30 	P-F1:30.08 	P-AP:25.22
+26-06-10 22:53:20.055 - INFO:         Average 		I-Auroc:80.93 	I-F1:71.60 	I-AP:77.14 	P-Auroc:89.73 	P-F1:31.15 	P-AP:26.23
+26-06-10 22:53:28.320 - INFO: batch_size = 1
+26-06-10 22:53:28.322 - INFO: ckt_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\baselines\AdaCLIP-main\weights\pretrained_visa_clinicdb.pth
+26-06-10 22:53:28.324 - INFO: class_name = candle
+26-06-10 22:53:28.325 - INFO: data_root = C:\Users\Administrator\Desktop\dataset\LED2\hhled_AD
+26-06-10 22:53:28.326 - INFO: image_path = asset/img.png
+26-06-10 22:53:28.327 - INFO: image_size = 518
+26-06-10 22:53:28.329 - INFO: k_clusters = 20
+26-06-10 22:53:28.330 - INFO: model = ViT-L-14-336
+26-06-10 22:53:28.331 - INFO: obj_name = all
+26-06-10 22:53:28.333 - INFO: prompting_branch = VL
+26-06-10 22:53:28.334 - INFO: prompting_depth = 4
+26-06-10 22:53:28.336 - INFO: prompting_length = 5
+26-06-10 22:53:28.337 - INFO: prompting_type = SD
+26-06-10 22:53:28.338 - INFO: save_fig = True
+26-06-10 22:53:28.339 - INFO: save_name = test.png
+26-06-10 22:53:28.341 - INFO: save_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\output\AdaCLIP\hhled\zero_shot_all
+26-06-10 22:53:28.342 - INFO: testing_data = hhled
+26-06-10 22:53:28.343 - INFO: testing_model = dataset
+26-06-10 22:53:28.344 - INFO: use_hsf = True
+26-06-10 23:51:44.114 - INFO: batch_size = 1
+26-06-10 23:51:44.116 - INFO: ckt_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\baselines\AdaCLIP-main\weights\pretrained_visa_clinicdb.pth
+26-06-10 23:51:44.118 - INFO: class_name = candle
+26-06-10 23:51:44.119 - INFO: data_root = C:\Users\Administrator\Desktop\dataset\LED2\hhled_AD
+26-06-10 23:51:44.120 - INFO: image_path = asset/img.png
+26-06-10 23:51:44.121 - INFO: image_size = 518
+26-06-10 23:51:44.123 - INFO: k_clusters = 20
+26-06-10 23:51:44.125 - INFO: model = ViT-L-14-336
+26-06-10 23:51:44.126 - INFO: obj_name = all
+26-06-10 23:51:44.127 - INFO: prompting_branch = VL
+26-06-10 23:51:44.128 - INFO: prompting_depth = 4
+26-06-10 23:51:44.130 - INFO: prompting_length = 5
+26-06-10 23:51:44.131 - INFO: prompting_type = SD
+26-06-10 23:51:44.132 - INFO: save_fig = True
+26-06-10 23:51:44.133 - INFO: save_name = test.png
+26-06-10 23:51:44.134 - INFO: save_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\output\AdaCLIP\hhled\zero_shot_all
+26-06-10 23:51:44.135 - INFO: testing_data = hhled
+26-06-10 23:51:44.137 - INFO: testing_model = dataset
+26-06-10 23:51:44.138 - INFO: use_hsf = True
+26-06-10 23:52:36.542 - INFO: batch_size = 1
+26-06-10 23:52:36.544 - INFO: ckt_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\baselines\AdaCLIP-main\weights\pretrained_visa_clinicdb.pth
+26-06-10 23:52:36.545 - INFO: class_name = candle
+26-06-10 23:52:36.546 - INFO: data_root = C:\Users\Administrator\Desktop\dataset\LED2\hhled_AD
+26-06-10 23:52:36.547 - INFO: image_path = asset/img.png
+26-06-10 23:52:36.549 - INFO: image_size = 518
+26-06-10 23:52:36.550 - INFO: k_clusters = 20
+26-06-10 23:52:36.551 - INFO: model = ViT-L-14-336
+26-06-10 23:52:36.552 - INFO: obj_name = all
+26-06-10 23:52:36.554 - INFO: prompting_branch = VL
+26-06-10 23:52:36.555 - INFO: prompting_depth = 4
+26-06-10 23:52:36.556 - INFO: prompting_length = 5
+26-06-10 23:52:36.557 - INFO: prompting_type = SD
+26-06-10 23:52:36.558 - INFO: save_fig = True
+26-06-10 23:52:36.559 - INFO: save_name = test.png
+26-06-10 23:52:36.560 - INFO: save_path = D:\MuSc-WG-main 4.2\MuSc-WG-main\output\AdaCLIP\hhled\zero_shot_all
+26-06-10 23:52:36.562 - INFO: testing_data = hhled
+26-06-10 23:52:36.563 - INFO: testing_model = dataset
+26-06-10 23:52:36.564 - INFO: use_hsf = True
+26-06-10 23:55:47.137 - INFO: AdaCLIP: 621.82ms per image
+26-06-10 23:55:47.138 - INFO: AdaCLIP GPU Memory: 2699.38 MB (Allocated), 2876.00 MB (Reserved)
+26-06-10 23:55:47.139 - INFO:       led_6core 		I-Auroc:66.57 	I-F1:93.70 	I-AP:94.82 	P-Auroc:82.01 	P-F1:41.47 	P-AP:38.78
+26-06-10 23:55:47.140 - INFO:       led_8core 		I-Auroc:99.86 	I-F1:99.63 	I-AP:99.98 	P-Auroc:79.78 	P-F1:37.08 	P-AP:32.54
+26-06-10 23:55:47.141 - INFO:         Average 		I-Auroc:83.22 	I-F1:96.67 	I-AP:97.40 	P-Auroc:80.90 	P-F1:39.28 	P-AP:35.66

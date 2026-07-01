@@ -61,13 +61,17 @@ def plot_segmentation_images(
             else:
                 mask = np.zeros_like(image)
 
-        savename = image_path.split("/")
+        savename = os.path.normpath(image_path).split(os.sep)
         savename = "_".join(savename[-save_depth:])
+        savename = os.path.splitext(savename)[0] + ".png"
         savename = os.path.join(savefolder, savename)
         f, axes = plt.subplots(1, 2 + int(masks_provided))
         axes[0].imshow(image.transpose(1, 2, 0))
-        axes[1].imshow(mask.transpose(1, 2, 0))
-        axes[2].imshow(segmentation)
+        if masks_provided:
+            axes[1].imshow(mask.transpose(1, 2, 0))
+            axes[2].imshow(segmentation)
+        else:
+            axes[1].imshow(segmentation)
         f.set_size_inches(3 * (2 + int(masks_provided)), 3)
         f.tight_layout()
         f.savefig(savename)
