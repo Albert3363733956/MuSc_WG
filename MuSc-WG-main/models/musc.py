@@ -414,13 +414,13 @@ class MuSc():
                 ablation_detail_start = 1       # 1: Skip Level 0 (Noise)
                 ablation_keep_ll = True         # True: Include Low Frequency Approximation
 
-                ablation_gamma  =  3        # Moderate Gamma
+                ablation_gamma  =  2.5        # Moderate Gamma
                 ablation_use_spot_weight = False  # Suppress patterns found in ANY other image (Occasional Normal Pattern)
                 ablation_use_morphology = True  # Toggle for Morphological Optimization (Opening/Closing + Smoothing)
                 
                 # Morphological Parameters
                 ablation_morph_open_k = 1       # Opening kernel size (remove noise). 1 = disabled.
-                ablation_morph_close_k = 3      # Closing kernel size (fill gaps). 3 is gentle.
+                ablation_morph_close_k = 5      # Closing kernel size (fill gaps). 3 is gentle.
                 ablation_morph_smooth_k = 3     # Gaussian smoothing kernel size (remove blockiness).
                 ablation_morph_sigma = 0.3      # Gaussian blur standard deviation.
                 

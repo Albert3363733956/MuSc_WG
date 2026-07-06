@@ -430,7 +430,8 @@ def test(args,):
         obj_list = get_dataset_classnames(dataset_name, root=dataset_dir, mode='test')
         if args.class_name != "all":
             obj_list = [args.class_name]
-        test_data = VisaDataset(root=dataset_dir, transform=preprocess, target_transform=transform, mode='test')
+        test_data = VisaDataset(root=dataset_dir, transform=preprocess, target_transform=transform,
+                                mode='test', obj_name=args.class_name)
     elif dataset_name in ['microled', 'miniled', 'hhled']:
         obj_list = get_dataset_classnames(dataset_name, root=dataset_dir, mode='test')
         if args.class_name != "all":

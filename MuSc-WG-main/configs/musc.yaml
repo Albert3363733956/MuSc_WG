@@ -1,6 +1,6 @@
 datasets:
-  dataset_name: 'hhled_ad'  # choice ['mvtec_ad', 'mvtec_loco', 'visa', 'btad', 'mpdd', 'miniled_ad', 'microled_ad',hhled_ad']
-  data_path: C:\Users\Administrator\Desktop\dataset\LED2\hhled_AD  # e.g. ./data/mvtec_anomaly_detection/ or C:\Users\Administrator\Desktop\dataset\MVTec_loco
+  dataset_name: 'visa'  # choice ['mvtec_ad', 'mvtec_loco', 'visa', 'btad', 'mpdd', 'miniled_ad', 'microled_ad',hhled_ad']
+  data_path: C:\Users\Administrator\Desktop\dataset\visa  # e.g. ./data/mvtec_anomaly_detection/ or C:\Users\Administrator\Desktop\dataset\MVTec_loco
   class_name:  'all'  # 'ALL' 'transistor' 'breakfast_box' 'bracket_black' 'miniled_TypeA_1' 'microled_TypeA_1'
   img_resize: 518  # 512 is for Patch 16 (32*16), for Patch 14 use 518 (37*14)
   divide_num: 1
@@ -15,9 +15,9 @@ msm:
   
 device: 0
 testing:
-  output_dir: 'output_hhled_定性'
+  output_dir: 'output_visa'
 
-  desktop_results_dir: C:\Users\Administrator\Desktop\hhled定性分析 # 修改这里控制复制到桌面的MuSc结果表文件夹路径
+  desktop_results_dir: C:\Users\Administrator\Desktop\visa定性分析 # 修改这里控制复制到桌面的MuSc结果表文件夹路径
   desktop_results_filename: 'results.xlsx' # 修改这里控制复制到桌面的MuSc结果表文件名
   module_profile_filename: 'musc_module_profile.xlsx' # 修改这里控制复制到桌面的模块分析表文件名
   
