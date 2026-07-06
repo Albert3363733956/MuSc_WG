@@ -28,6 +28,11 @@ def setup_seed(seed):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
+def str2bool(value):
+    if isinstance(value, bool):
+        return value
+    return value.lower() in ("true", "1", "yes", "y", "on")
+
 def test(args):
     img_size = args.image_size
     features_list = args.features_list
@@ -313,8 +318,8 @@ if __name__ == '__main__':
     parser.add_argument("--sigma", type=int, default=4, help="gaussian filter sigma")
     parser.add_argument("--k", type=float, default=0.7, help="fusion weight (0.5, 0.7, 0.8)")
     parser.add_argument("--device",type=str,default='cuda:0')
-    parser.add_argument("--visulize_bool",type=bool,default=False)
-    parser.add_argument("--compute_pixel_aupro", type=bool, default=True, help="compute pixel-level AUPRO metric in addition to AUROC")
+    parser.add_argument("--visulize_bool",type=str2bool,default=False)
+    parser.add_argument("--compute_pixel_aupro", type=str2bool, default=True, help="compute pixel-level AUPRO metric in addition to AUROC")
     parser.add_argument("--model_type", type=str, default='mrad-clip',
         choices=['mrad-clip', 'mrad-ft', 'mrad-tf'],
         help='Model type: mrad-clip (full), mrad-ft (fine-tuned), mrad-tf (train-free)')

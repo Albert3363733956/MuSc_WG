@@ -59,7 +59,13 @@ def build_patch_cache_model(load_cache = False,  clip_model = None, train_loader
             for items in tqdm(train_loader_cache):
                 images = items['img'].to(device)
                 labels =  items['anomaly'].to(device)# b
-                gt = items['img_mask'].squeeze().to(device) # b 518 518
+                gt = items['img_mask'].to(device)
+                if gt.dim() == 4 and gt.size(1) == 1:
+                    gt = gt[:, 0]
+                elif gt.dim() == 2:
+                    gt = gt.unsqueeze(0)
+                elif gt.dim() != 3:
+                    raise ValueError(f"Expected mask tensor with shape (B,1,H,W), (B,H,W), or (H,W), got {tuple(gt.shape)}")
                 gt[gt > 0.5] = 1
                 gt[gt <= 0.5] = 0
                 image_fe,patch_features ,_,patch_projections = clip_model.encode_image(images,[6, 12, 18, 24],DPAM_layer=24)

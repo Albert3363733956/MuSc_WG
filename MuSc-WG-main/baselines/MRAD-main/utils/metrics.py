@@ -1,29 +1,49 @@
 from sklearn.metrics import auc, roc_auc_score, average_precision_score, f1_score, precision_recall_curve, pairwise
 import numpy as np
-from skimage import measure
+from scipy import ndimage
 
 def cal_pro_score(masks, amaps, max_step=200, expect_fpr=0.3):
     # ref: https://github.com/gudovskiy/cflow-ad/blob/master/train.py
+    masks = masks.astype(bool)
     binary_amaps = np.zeros_like(amaps, dtype=bool)
     min_th, max_th = amaps.min(), amaps.max()
+    if max_th == min_th:
+        return 0.0
     delta = (max_th - min_th) / max_step
     pros, fprs, ths = [], [], []
+
+    region_infos = []
+    for mask in masks:
+        labeled_mask, region_count = ndimage.label(mask)
+        if region_count == 0:
+            region_infos.append(None)
+            continue
+        region_ids = np.arange(1, region_count + 1)
+        areas = ndimage.sum(mask, labeled_mask, index=region_ids)
+        valid = areas > 0
+        region_infos.append((labeled_mask, region_ids[valid], areas[valid]))
+
     for th in np.arange(min_th, max_th, delta):
         binary_amaps[amaps <= th], binary_amaps[amaps > th] = 0, 1
         pro = []
-        for binary_amap, mask in zip(binary_amaps, masks):
-            for region in measure.regionprops(measure.label(mask)):
-                tp_pixels = binary_amap[region.coords[:, 0], region.coords[:, 1]].sum()
-                pro.append(tp_pixels / region.area)
-        inverse_masks = 1 - masks
+        for binary_amap, image_regions in zip(binary_amaps, region_infos):
+            if image_regions is None:
+                continue
+            labeled_mask, region_ids, areas = image_regions
+            tp_pixels = ndimage.sum(binary_amap, labeled_mask, index=region_ids)
+            pro.extend(tp_pixels / areas)
+        inverse_masks = np.logical_not(masks)
         fp_pixels = np.logical_and(inverse_masks, binary_amaps).sum()
-        fpr = fp_pixels / inverse_masks.sum()
-        pros.append(np.array(pro).mean())
+        inverse_area = inverse_masks.sum()
+        fpr = fp_pixels / inverse_area if inverse_area > 0 else 0.0
+        pros.append(np.array(pro).mean() if pro else 0.0)
         fprs.append(fpr)
         ths.append(th)
     pros, fprs, ths = np.array(pros), np.array(fprs), np.array(ths)
     idxes = fprs < expect_fpr
     fprs = fprs[idxes]
+    if fprs.size < 2 or fprs.max() == fprs.min():
+        return 0.0
     fprs = (fprs - fprs.min()) / (fprs.max() - fprs.min())
     pro_auc = auc(fprs, pros[idxes])
     return pro_auc
